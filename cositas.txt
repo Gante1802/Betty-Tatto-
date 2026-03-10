@@ -1,0 +1,12 @@
+paleta de color claro:
+#5f7d59
+#9ddc5c
+#cfe6ca
+
+#d187fb
+#a05bc8
+#8031ae
+#4b0d6f
+
+#2f4d2b
+

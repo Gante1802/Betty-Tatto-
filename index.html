@@ -7,7 +7,7 @@
   <title>Betty Tattoo</title>
   <meta name="description" content="Betty Tattoo">
   <link rel="stylesheet" href="assets/css/style.css">
-  
+  <link rel="stylesheet" href="assets/css/general.css">
 </head>
 
 <body>
@@ -15,20 +15,22 @@
     <!---Header--->
 
     <header class="header">
-        <h1>Welcome to Betty Tattoo</h1>
+        <h1></h1>
         <nav class="nav container">
-            <a class="brand" href="#home">Betty Tatto</a>
+            <a class="brand" href="#home"><img class="pfp" src="assets/Images/Sketches/pfp.jpeg" alt="Betty Tattoo"></a>
 
-        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
-          ☰
-        </button>
+            
+            <div class="nav-links">
+              <a href="#portafolio">Portafolio</a>
+              <a href="#contacto">Contacto</a>
+              <a class="btn" href="#reservar">Reservar</a>
+              <a href="#FAQ">FAQ</a>
+            </div>
 
-        <div class="nav-links">
-            <a href="#portfolio">Portafolio</a>
-            <a href="#Redes">Redes</a>
-            <a class="btn" href="#reservar">Reservar</a>
-            <a href="#FAQ">FAQ</a>
-        </div>
+            <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+              ☰
+            </button>
+
         </nav>
     </header>
     <!--header end-->
@@ -45,13 +47,11 @@
                 </div>
 
                 <div class="hero-cta">
-                    <a class="btn" href="#portfolio">Ver Portfolio</a>
+                    <a class="btn" href="#portafolio">Ver Portfolio</a>
                     <a class="btn" href="#reservar">Reservar por DM</a>
                 </div>
 
-                <div class="hero-image">
-                    <img src="" alt="Tattoo Artist in Miami">
-                </div>
+               
 
             </div>
         </section>
@@ -80,7 +80,7 @@
 <!--highlights end-->
 
 <!--portfolio-->
-<section class="section-portfolio">
+<section class="portafolio" id="portafolio">
 
 </section>
 <!--portfolio end-->
@@ -125,7 +125,7 @@
 <!--HTR End-->
 
 <!--Reservar-->
-<section id="book" class="book">
+<section id="reservar" class="book">
         <div class="container book-box">
           <h2>Reserva tu cita</h2>
           <p>Respondo en 24–48h según agenda.</p>
@@ -143,7 +143,7 @@
 <!--Reservar end-->
 
 <!--Contacto-->
-<section id="contact" class="contact">
+<section id="contacto" class="contact">
         <div class="container">
           <header class="section-head">
             <h2>Contacto</h2>
@@ -165,7 +165,7 @@
     </div>
 
     <!--FAQ=Policies-->
-    <section id="faq" class="faq">
+    <section id="FAQ" class="faq">
         <div class="container">
           <header class="section-head">
             <h2>FAQ y Políticas</h2>
