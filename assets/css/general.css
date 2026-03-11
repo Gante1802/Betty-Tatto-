@@ -9,7 +9,6 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
   background-color: #0a0a0a;
   color: #f5f5f5;
   line-height: 1.6;
@@ -19,7 +18,8 @@ body {
 
 :root {
   --black: #0a0a0a;
-  --purple: #d187fb;
+  --purple: #a05bc8;
+  --darkpurple: #7a3fbf;
   --green: #9ddc5c;
   --white: #fff;
   --gray: #1c1c1c;
@@ -40,7 +40,6 @@ body {
   background: var(--purple);
   color: white;
   padding: 10px 20px;
-  margin-right: 10px;
   border-radius: 5px;
   text-decoration: none;
   transition: 0.3s;
@@ -66,8 +65,12 @@ body {
   .hero-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .nav-links {
-    display: none;
-  }
+/* ===== Local Fonts ===== */
+
+@font-face {
+  font-family: "Titulo";
+  src: url("../fonts/UnifrakturCook-Bold.ttf") format("truetype");
+  font-display: swap;
 }

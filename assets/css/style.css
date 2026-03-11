@@ -10,8 +10,13 @@
 .nav {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   padding: 15px 0;
+}
+
+.nav-container {
+  width: 90%;
+  max-width: 1100px;
 }
 
 .pfp {
@@ -23,7 +28,7 @@
 .brand {
   font-size: 1.2rem;
   font-weight: bold;
-  color: var(--purple);
+  color: var(--darkpurple);
   text-decoration: none;
 }
 
@@ -45,30 +50,44 @@
   background-image: url("/assets/images/designs/23.jpg");
   background-size: cover;
   background-position: center;
-  height: 55vh;
+  height: 70vh;
 }
 
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  align-items: center;
+  align-items: start;
+  min-height: calc(70vh - 160px);
+}
+
+.hero-text {
+  grid-column: 1 / -1;
+  justify-self: center;
+  align-self: start;
+  text-align: center;
+  transform: translateY(-4em);
 }
 
 .hero-text h1 {
-  font-size: 2.5rem;
-  color: var(--purple);
-  margin-bottom: 10px;
+  font-family: "Titulo", serif;
+  font-size: 4rem;
+  color: var(--darkpurple);
+  margin-bottom: 5px;
 }
 
 .hero-text p {
   margin-bottom: 20px;
-  color: #ccc;
+  color: #010101;
 }
 
-.hero-media {
-  width: 100%;
-  border-radius: 10px;
+.hero-cta {
+  grid-column: 1 / -1;
+  display: flex;
+  align-self: end;
+  justify-content: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 /* ===== SECTIONS ===== */
