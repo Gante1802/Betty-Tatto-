@@ -20,7 +20,7 @@ body {
   --black: #0a0a0a;
   --purple: #a05bc8;
   --darkpurple: #7a3fbf;
-  --green: #9ddc5c;
+  --green: #10b981;
   --white: #fff;
   --gray: #1c1c1c;
 }
@@ -37,8 +37,11 @@ body {
 
 .btn {
   display: inline-block;
-  background: var(--purple);
-  color: white;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 1.2rem;
+
   padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
@@ -47,16 +50,18 @@ body {
 
 .btn:hover {
   background: var(--green);
+  color: var(--black);
 }
 
 .btn-outline {
-  background: transparent;
-  border: 2px solid var(--purple);
+  background: var(--darkpurple);
+  border: 2px solid var(--darkpurple);
+  color: var(--black);
 }
 
 .btn-outline:hover {
   border-color: var(--green);
-  color: var(--green);
+  color: var(--black);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -65,12 +70,23 @@ body {
   .hero-grid {
     grid-template-columns: 1fr;
   }
+
+  h1 {
+    font-size: 3rem;
+    line-height: 1.1;
+  }
 }
 
-/* ===== Local Fonts ===== */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+}
 
-@font-face {
-  font-family: "Titulo";
-  src: url("../fonts/UnifrakturCook-Bold.ttf") format("truetype");
-  font-display: swap;
+@media (max-width: 320px) {
+  h1 {
+    font-size: 1.7rem;
+    line-height: 1.1;
+  }
 }
