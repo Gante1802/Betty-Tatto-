@@ -11,7 +11,7 @@
 .nav {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  align-items: center;
   padding: 15px 0;
 }
 
@@ -31,11 +31,11 @@
 }
 
 .nav-links a {
-  margin-top: 20px;
+  margin-top: auto;
   margin-left: 20px;
   text-decoration: none;
   color: var(--white);
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
