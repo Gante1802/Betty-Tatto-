@@ -7,7 +7,18 @@
   <title>Betty Tattoo</title>
   <meta name="description" content="Betty Tattoo">
   <link rel="stylesheet" href="assets/css/style.css">
-  
+  <link rel="stylesheet" href="assets/css/general.css">
+
+  <!--Fuentes-->
+  <!--Encabesados-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+<!--SubTitulos-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<!------------->
 </head>
 
 <body>
@@ -15,20 +26,20 @@
     <!---Header--->
 
     <header class="header">
-        <h1>Welcome to Betty Tattoo</h1>
-        <nav class="nav container">
-            <a class="brand" href="#home">Betty Tatto</a>
+        <h1></h1>
+        <nav class="nav nav-container">
+            <a class="brand" href=""><img class="pfp" src="assets/Images/Sketches/pfp.jpeg" alt="Betty Tattoo"></a>
 
-        <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
-          ☰
-        </button>
+            
+            <div class="nav-links">
+              <a href="#portafolio">Portafolio</a>
+              <a href="#contacto">Contacto</a>
+              <a href="#reservar">Reservar</a>
+              <a href="#FAQ">FAQ</a>
+            </div>
 
-        <div class="nav-links">
-            <a href="#portfolio">Portafolio</a>
-            <a href="#Redes">Redes</a>
-            <a class="btn" href="#reservar">Reservar</a>
-            <a href="#FAQ">FAQ</a>
-        </div>
+           
+
         </nav>
     </header>
     <!--header end-->
@@ -36,26 +47,23 @@
     <main id="main">
 
     <!---Hero--->
-         <section id="home" class="hero">
+         <section class="hero">
             <div class="container hero-grid">
 
                 <div class="hero-text">
-                <h1>Tatto Artist in Miami</h1>
+                <h1>Betty Tattoo</h1>
                 <p>Creating unique and personalized tattoos for every client.</p>
                 </div>
 
                 <div class="hero-cta">
-                    <a class="btn" href="#portfolio">Ver Portfolio</a>
-                    <a class="btn" href="#reservar">Reservar por DM</a>
+                    <a class="btn btn-cta" href="#portafolio">Ver Portfolio</a>
+                    <a class="btn btn-cta" href="#reservar">Reservar por DM</a>
                 </div>
 
-                <div class="hero-image">
-                    <img src="" alt="Tattoo Artist in Miami">
-                </div>
+               
 
             </div>
         </section>
-
     <!--Hero end-->
 
 <!--highlights-->
@@ -80,22 +88,23 @@
 <!--highlights end-->
 
 <!--portfolio-->
-<section class="section-portfolio">
+<section class="portafolio" id="portafolio">
 
 </section>
 <!--portfolio end-->
 
 <!--Flash-->
  <section id="flash" class="flash">
+
         <div class="container">
           <header class="section-head">
             <h2>Flash disponibles</h2>
-            <p>Elige uno y reserva. (Se agotan)</p>
+            <p>Elige uno y reserva.</p>
           </header>
 
           <div class="grid flash-grid">
             <article class="flash-card">
-              <img src="assets/images/flash/flash_001.jpg" alt="Flash 1" />
+              <img src="assets/images/designs/1.jpeg" alt="Flash 1" />
               <div class="flash-info">
                 <p>Tamaño sugerido: 6–10 cm</p>
                 <a class="btn btn-small" href="#book">Quiero este</a>
@@ -125,7 +134,7 @@
 <!--HTR End-->
 
 <!--Reservar-->
-<section id="book" class="book">
+<section id="reservar" class="book">
         <div class="container book-box">
           <h2>Reserva tu cita</h2>
           <p>Respondo en 24–48h según agenda.</p>
@@ -143,7 +152,7 @@
 <!--Reservar end-->
 
 <!--Contacto-->
-<section id="contact" class="contact">
+<section id="contacto" class="contact">
         <div class="container">
           <header class="section-head">
             <h2>Contacto</h2>
@@ -165,7 +174,7 @@
     </div>
 
     <!--FAQ=Policies-->
-    <section id="faq" class="faq">
+    <section id="FAQ" class="faq">
         <div class="container">
           <header class="section-head">
             <h2>FAQ y Políticas</h2>
