@@ -41,11 +41,11 @@ body {
   font-weight: 700;
   letter-spacing: 0.5px;
   font-size: 1.2rem;
-
   padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
   transition: 0.3s;
+  color: var(--darkpurple);
 }
 
 .btn:hover {
