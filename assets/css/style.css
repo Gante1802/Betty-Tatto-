@@ -124,21 +124,65 @@ section {
 
 /* ===== PORTFOLIO ===== */
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
-}
-
-.gallery img {
+.bt-carousel-left {
   width: 100%;
-  border-radius: 8px;
-  transition: transform 0.3s;
+  overflow: hidden;
+  padding: 20px 0;
 }
 
-.gallery img:hover {
-  transform: scale(1.05);
+.bt-track-left {
+  display: flex;
+  gap: 20px;
+  animation: scrollLeft 18s linear infinite;
 }
+
+.bt-item {
+  min-width: 260px;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 15px;
+  color: #fff;
+  text-align: center;
+}
+
+.bt-item img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.bt-carousel-right {
+  width: 100%;
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.bt-track-right {
+  display: flex;
+  gap: 20px;
+  animation: scrollRight 18s linear infinite;
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
 
 /* ===== FLASH ===== */
 
