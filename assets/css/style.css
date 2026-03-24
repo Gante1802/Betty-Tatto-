@@ -3,7 +3,7 @@
 .header {
   background: var(--black);
   border-bottom: 1px solid var(--gray);
-  position: sticky;
+  
   z-index: 1000;
   top: 0;
 }
@@ -182,8 +182,6 @@ section {
   }
 }
 
-
-
 /* ===== FLASH ===== */
 
 .flash-grid {
@@ -230,19 +228,6 @@ section {
   font-size: 0.9rem;
   opacity: 0.8;
   margin-bottom: 1rem;
-}
-
-/* ===== STEPS ===== */
-
-.steps-list {
-  max-width: 600px;
-  margin: auto;
-  list-style: decimal;
-  padding-left: 20px;
-}
-
-.steps-list li {
-  margin-bottom: 10px;
 }
 
 /* ===== FAQ ===== */
