@@ -3,7 +3,7 @@
 .header {
   background: var(--black);
   border-bottom: 1px solid var(--gray);
-  
+
   z-index: 1000;
   top: 0;
 }
@@ -108,6 +108,7 @@
 /* ===== SECTIONS ===== */
 
 section {
+  margin-top: 50px;
   padding: 70px 0;
 }
 
@@ -138,18 +139,23 @@ section {
 
 .bt-item {
   min-width: 260px;
+  height: 500px;
   background: #111;
   border: 1px solid #222;
   border-radius: 12px;
-  padding: 15px;
+  overflow: hidden;
   color: #fff;
   text-align: center;
 }
 
 .bt-item img {
   width: 100%;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.port-img {
+  width: 100%;
 }
 
 @keyframes scrollLeft {
@@ -181,8 +187,6 @@ section {
     transform: translateX(0);
   }
 }
-
-
 
 /* ===== FLASH ===== */
 

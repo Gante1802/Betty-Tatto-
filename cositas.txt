@@ -11,3 +11,12 @@ paleta de color claro:
 #2f4d2b
 
 //Tipografias.Fuentes//
+
+Ideas:
+Guardar datos de reservas
+poner limite de reservas por persona
+Poner un fee para evitar Troles , ese fee sera mas alto en los tatuajes personalisados
+Hacer que cuando un flash sea reservado , este sea ocupado y ocultado de la pagina
+hacer q cada ccosa tenga su precio
+Hacer una manera en que Betty pueda subir sus disenos y ponerles precio ella misma
+poner opciones como lenguaje y modo claro a la pagina
