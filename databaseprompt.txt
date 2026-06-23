@@ -1,0 +1,37 @@
+User{
+    name,
+    email,
+    phone,
+    age
+}
+
+solicitud{
+    user_ID
+    stylesize
+    placement
+    status
+}
+
+Pagos{
+    user_ID
+    ammount
+    deposit
+    status
+    payment_method
+}
+
+review{
+    user_ID 
+    rating
+    comment
+    date
+}
+
+concentimiento legal{
+    user_IDallergies
+    medical_condition
+    dateconsentSigned
+}
+
+Password:
+

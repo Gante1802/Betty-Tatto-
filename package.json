@@ -1,0 +1,27 @@
+{
+  "name": "betty_tatto",
+  "version": "1.0.0",
+  "description": "Una pagina donde podras reservar tu cita para un tatuaje",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gante1802/Betty-Tatto-.git"
+  },
+  "keywords": [],
+  "author": "Diego David Soler Gomez",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Gante1802/Betty-Tatto-/issues"
+  },
+  "homepage": "https://github.com/Gante1802/Betty-Tatto-#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.3.0"
+  }
+}
