@@ -1,4 +1,5 @@
-cositas/
+cositas.txt/
 .gitignore/
 package-lock.json
 node_modules/
+databaseprompt.txt/
