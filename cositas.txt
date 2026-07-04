@@ -20,3 +20,50 @@ Hacer que cuando un flash sea reservado , este sea ocupado y ocultado de la pagi
 hacer q cada ccosa tenga su precio
 Hacer una manera en que Betty pueda subir sus disenos y ponerles precio ella misma
 poner opciones como lenguaje y modo claro a la pagina
+
+//////////////////////////////////////////////////////
+
+Objetivo de proyecto: Crear una pagina web para Betty y aprender en el proceso
+Usuarios{
+   
+   
+    Admin(
+        Administrar clientes;
+        Administrar disponibilidad de Flashs;
+        Aprovar solicitudes;
+        Rechasar Solicitudes;
+        cambiar Disponibilidad;
+        Ver estadisticas;
+        Gestionar Pagos;
+    )
+}
+
+                           BETTY TATTOOS
+
+                                 │
+
+        ┌────────────────────────┼────────────────────────┐
+
+        │                        │                        │
+
+     Visitante               Cliente                 Administrador
+
+        │                        │                        │
+
+────────┼────────────────────────┼────────────────────────┼────────
+
+        │                        │                        │
+
+     Galería                Dashboard               Dashboard
+
+     Información            Reservas               Clientes
+
+     FAQ                    Pagos                  Flash
+
+     Flash                  Perfil                 Galería
+
+     Contacto               Historial              Estadísticas
+
+                                                   Pagos
+
+                                                   Configuración
