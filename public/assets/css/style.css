@@ -47,7 +47,7 @@
 
 .hero {
   padding: 80px 0;
-  background-image: url("/assets/images/designs/23.jpg");
+  background-image: url("/public/assets/images/brand/hero.jpg");
   background-size: cover;
   background-position: center;
   height: 70vh;
@@ -133,12 +133,15 @@ section {
 
 .bt-track-left {
   display: flex;
-  gap: 20px;
-  animation: scrollLeft 18s linear infinite;
+  gap: 30px;
+  width: max-content;
+  will-change: transform;
+  animation: scrollLeft 20s linear infinite;
 }
 
 .bt-item {
   min-width: 260px;
+  flex: 0 0 260px;
   height: 500px;
   background: #111;
   border: 1px solid #222;
@@ -163,7 +166,7 @@ section {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 15px));
   }
 }
 
@@ -175,13 +178,15 @@ section {
 
 .bt-track-right {
   display: flex;
-  gap: 20px;
-  animation: scrollRight 18s linear infinite;
+  gap: 30px;
+  width: max-content;
+  will-change: transform;
+  animation: scrollRight 20s linear infinite;
 }
 
 @keyframes scrollRight {
   0% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 15px));
   }
   100% {
     transform: translateX(0);

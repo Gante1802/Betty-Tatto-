@@ -32,6 +32,109 @@ body {
   margin-bottom: 15px;
 }
 
+.contact-methods {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.contact-methods label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.flash-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.flash-option {
+  display: block;
+  padding: 10px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #222;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.flash-option:hover {
+  border-color: #888;
+  transform: translateY(-2px);
+}
+
+.flash-option input {
+  margin-bottom: 8px;
+}
+
+.flash-option img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.flash-option span {
+  display: block;
+  font-size: 14px;
+  color: #f2f2f2;
+}
+
+.flash-option-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.flash-option-description {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #cfcfcf;
+  margin-bottom: 8px;
+}
+
+.flash-option-price {
+  text-align: center;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.flash-selection-details {
+  padding: 14px;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #202020;
+}
+
+.flash-selection-label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b8b8b8;
+}
+
+.flash-selection-details h4,
+.flash-selection-details p {
+  margin: 0;
+}
+
+.flash-selection-details h4 {
+  margin-bottom: 8px;
+}
+
+.flash-selection-price {
+  margin-top: 10px;
+  font-weight: 700;
+}
+
 label {
   margin-bottom: 6px;
   font-size: 14px;
@@ -79,4 +182,10 @@ hr {
 
 .hidden {
   display: none;
+}
+
+@media (max-width: 560px) {
+  .flash-options {
+    grid-template-columns: 1fr;
+  }
 }
