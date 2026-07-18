@@ -1,4 +1,4 @@
-window.flashCatalog = [
+const defaultFlashCatalog = [
   {
     id: "1",
     title: "Flash 1",
@@ -50,6 +50,28 @@ window.flashCatalog = [
     price: "$80",
   },
 ];
+
+window.flashCatalog = [...defaultFlashCatalog];
+
+window.loadFlashCatalog = async function loadFlashCatalog() {
+  try {
+    const response = await fetch("/api/flashes");
+
+    if (!response.ok) {
+      return window.flashCatalog;
+    }
+
+    const payload = await response.json();
+
+    if (Array.isArray(payload.data)) {
+      window.flashCatalog = payload.data;
+    }
+
+    return window.flashCatalog;
+  } catch (error) {
+    return window.flashCatalog;
+  }
+};
 
 window.findFlashById = function findFlashById(flashId) {
   return window.flashCatalog.find((flash) => flash.id === String(flashId));

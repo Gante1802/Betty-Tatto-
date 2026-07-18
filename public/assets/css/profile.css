@@ -1,0 +1,68 @@
+:root {
+  --bg: #171118;
+  --card: #221625;
+  --border: #4a314f;
+  --text: #f6edf7;
+  --muted: #d0bfd3;
+  --accent: #f3ba4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Cormorant Garamond", serif;
+  background:
+    radial-gradient(circle at 10% 10%, #35203c 0%, transparent 44%),
+    radial-gradient(circle at 85% 85%, #3f2829 0%, transparent 44%), var(--bg);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(180deg, #241729 0%, #1f1521 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+p {
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+a,
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+a {
+  background: #3b2740;
+  color: var(--text);
+}
+
+button {
+  background: var(--accent);
+  color: #261404;
+  cursor: pointer;
+}

@@ -19,8 +19,6 @@ const whatsappField = document.getElementById("whatsappField");
 const emailInput = emailField.querySelector('input[name="email"]');
 const whatsappInput = whatsappField.querySelector('input[name="whatsapp"]');
 
-window.renderFlashOptions(flashOptionsContainer);
-
 function getFlashDesignInputs() {
   return document.querySelectorAll('input[name="flashDesign"]');
 }
@@ -110,27 +108,37 @@ flashOptionsContainer.addEventListener("change", (event) => {
   }
 });
 
-const searchParams = new URLSearchParams(window.location.search);
-const preselectedType = searchParams.get("type");
-const preselectedFlash = searchParams.get("flash");
-
-if (preselectedType === "flash") {
-  type.value = "flash";
-}
-
-if (preselectedFlash) {
-  const flashInput = document.querySelector(
-    `input[name="flashDesign"][value="${preselectedFlash}"]`,
-  );
-
-  if (flashInput) {
-    flashInput.checked = true;
+async function initializeBookingForm() {
+  if (typeof window.loadFlashCatalog === "function") {
+    await window.loadFlashCatalog();
   }
+
+  window.renderFlashOptions(flashOptionsContainer);
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const preselectedType = searchParams.get("type");
+  const preselectedFlash = searchParams.get("flash");
+
+  if (preselectedType === "flash") {
+    type.value = "flash";
+  }
+
+  if (preselectedFlash) {
+    const flashInput = document.querySelector(
+      `input[name="flashDesign"][value="${preselectedFlash}"]`,
+    );
+
+    if (flashInput) {
+      flashInput.checked = true;
+    }
+  }
+
+  updateForm();
+  updateFlashSelectionDetails();
+  updateContactFields();
 }
 
-updateForm();
-updateFlashSelectionDetails();
-updateContactFields();
+initializeBookingForm();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

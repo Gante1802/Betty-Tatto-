@@ -1,0 +1,51 @@
+[
+  {
+    "id": "1",
+    "title": "Flash 1",
+    "image": "/public/assets/images/designs/1.jpeg",
+    "description": "6 a 10 cm.",
+    "price": "$50"
+  },
+  {
+    "id": "2",
+    "title": "Flash 2",
+    "image": "/public/assets/images/designs/2.jpeg",
+    "description": "20cm",
+    "price": "$80"
+  },
+  {
+    "id": "3",
+    "title": "Flash 3",
+    "image": "/public/assets/images/designs/3.jpeg",
+    "description": "te parecen bien 47 cm?.",
+    "price": "$80"
+  },
+  {
+    "id": "4",
+    "title": "Flash 4",
+    "image": "/public/assets/images/designs/4.jpeg",
+    "description": "ENRIQUEEEEE.",
+    "price": "$80"
+  },
+  {
+    "id": "5",
+    "title": "Flash 5",
+    "image": "/public/assets/images/designs/5.jpeg",
+    "description": "eso mismo.",
+    "price": "$80"
+  },
+  {
+    "id": "6",
+    "title": "Flash 6",
+    "image": "/public/assets/images/designs/6.jpeg",
+    "description": "30cm.",
+    "price": "$80"
+  },
+  {
+    "id": "7",
+    "title": "Flash 7",
+    "image": "/public/assets/images/designs/7.jpeg",
+    "description": "Flash listo para reservar con una composicion directa y elegante.",
+    "price": "$80"
+  }
+]

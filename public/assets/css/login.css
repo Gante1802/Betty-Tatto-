@@ -1,0 +1,136 @@
+:root {
+  --bg: #100b08;
+  --panel: #1b1410;
+  --panel-border: #3b2e27;
+  --accent: #f07f47;
+  --accent-dark: #b95b2f;
+  --text: #f5eee9;
+  --muted: #cfb7a8;
+  --error: #ff7d7d;
+  --ok: #93f2b4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Cormorant Garamond", serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 15%, #2b1a11 0%, transparent 45%),
+    radial-gradient(circle at 80% 70%, #4a2516 0%, transparent 40%),
+    linear-gradient(145deg, #0a0908 0%, #130f0c 55%, #1b120d 100%);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.login-shell {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #1b1410 0%, #17100c 100%);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
+}
+
+.brand {
+  font-family: "UnifrakturCook", cursive;
+  font-size: 2.1rem;
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.credentials {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 12px;
+  border: 1px dashed #5a4438;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+label {
+  font-size: 1.1rem;
+}
+
+input {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid #5f4638;
+  background: #241a14;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: 2px solid rgba(240, 127, 71, 0.35);
+  border-color: var(--accent);
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    var(--accent-dark) 100%
+  );
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+.feedback {
+  min-height: 24px;
+  margin-top: 14px;
+  font-size: 0.98rem;
+}
+
+.feedback.error {
+  color: var(--error);
+}
+
+.feedback.success {
+  color: var(--ok);
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 14px;
+  color: #efcbb5;
+}
+
+@media (max-width: 500px) {
+  .login-shell {
+    padding: 22px;
+  }
+
+  .brand {
+    font-size: 1.8rem;
+  }
+}

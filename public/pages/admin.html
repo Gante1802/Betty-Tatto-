@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Flash | Betty Tattoo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/public/assets/css/admin.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <header>
+        <div>
+          <h1>Panel de flashes</h1>
+          <p>Aqui Betty puede crear, editar o eliminar flashes.</p>
+        </div>
+        <button id="logout-btn" class="secondary">Cerrar sesion</button>
+      </header>
+
+      <section>
+        <h2 id="form-title">Crear nuevo flash</h2>
+        <form id="flash-form" class="form-grid">
+          <div>
+            <label for="title">Titulo</label>
+            <input id="title" name="title" type="text" required />
+          </div>
+
+          <div>
+            <label for="price">Precio</label>
+            <input id="price" name="price" type="text" required />
+          </div>
+
+          <div class="full">
+            <label for="image">URL de imagen</label>
+            <input id="image" name="image" type="text" required />
+          </div>
+
+          <div class="full">
+            <label for="description">Descripcion</label>
+            <textarea id="description" name="description" required></textarea>
+          </div>
+
+          <div>
+            <button id="submit-btn" class="primary" type="submit">
+              Guardar flash
+            </button>
+          </div>
+
+          <div>
+            <button id="cancel-edit-btn" class="secondary" type="button" hidden>
+              Cancelar edicion
+            </button>
+          </div>
+        </form>
+
+        <p id="feedback" class="feedback"></p>
+      </section>
+
+      <section>
+        <h2>Catalogo actual</h2>
+        <div id="flash-list" class="flash-list"></div>
+      </section>
+    </main>
+
+    <script src="/public/assets/js/admin.js"></script>
+  </body>
+</html>
