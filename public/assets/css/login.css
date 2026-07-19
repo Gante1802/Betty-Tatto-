@@ -64,6 +64,36 @@ body {
   color: var(--muted);
 }
 
+.auth-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tab-button {
+  border: 1px solid #5f4638;
+  background: #221712;
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    var(--accent-dark) 100%
+  );
+  border-color: var(--accent-dark);
+}
+
+.auth-form {
+  margin-top: 8px;
+}
+
 label {
   font-size: 1.1rem;
 }
@@ -109,6 +139,10 @@ button:hover {
   min-height: 24px;
   margin-top: 14px;
   font-size: 0.98rem;
+}
+
+.hidden {
+  display: none;
 }
 
 .feedback.error {

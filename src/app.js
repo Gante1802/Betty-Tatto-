@@ -1,23 +1,35 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 const uploadRoutes = require("./routes/uploadRoutes");
 const authRoutes = require("./routes/authRoutes");
 const flashRoutes = require("./routes/flashRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
+const { authRateLimiter } = require("./middlewares/rateLimiters");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  }),
+);
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
-  const authCookie = req.headers.cookie || "";
-  const hasAuthCookie = authCookie
-    .split(";")
-    .map((item) => item.trim())
-    .some((item) => item.startsWith("bettyAuthToken="));
+  const hasAuthCookie = Boolean(req.cookies?.bettyAuthToken);
 
   if (!hasAuthCookie) {
     return res.redirect("/public/pages/login.html");
@@ -26,8 +38,9 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/flashes", flashRoutes);
+app.use("/api/bookings", bookingRoutes);
 app.use("/api/uploads", uploadRoutes);
 
 app.use((err, req, res, next) => {

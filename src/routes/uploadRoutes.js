@@ -1,6 +1,7 @@
 const express = require("express");
 
 const upload = require("../middlewares/upload");
+const { requireAuth, requireAdmin } = require("../middlewares/auth");
 const {
   uploadFrontendImage,
   uploadPublicationImage,
@@ -10,13 +11,26 @@ const {
 
 const router = express.Router();
 
-router.post("/frontend", upload.single("image"), uploadFrontendImage);
-router.post("/publicaciones", upload.single("image"), uploadPublicationImage);
+router.post(
+  "/frontend",
+  requireAuth,
+  requireAdmin,
+  upload.single("image"),
+  uploadFrontendImage,
+);
+router.post(
+  "/publicaciones",
+  requireAuth,
+  requireAdmin,
+  upload.single("image"),
+  uploadPublicationImage,
+);
 router.post(
   "/referencias-clientes",
+  requireAuth,
   upload.single("image"),
   uploadClientReferenceImage,
 );
-router.delete("/", deleteImage);
+router.delete("/", requireAuth, requireAdmin, deleteImage);
 
 module.exports = router;

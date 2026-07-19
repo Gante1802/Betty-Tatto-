@@ -1,0 +1,18 @@
+[
+  {
+    "id": "admin-betty",
+    "username": "bettyadmin",
+    "password": "betty123",
+    "role": "admin",
+    "displayName": "Betty",
+    "createdAt": "2026-07-18T00:00:00.000Z"
+  },
+  {
+    "id": "admin-diego",
+    "username": "diegoadmin",
+    "password": "diego123",
+    "role": "admin",
+    "displayName": "Diego",
+    "createdAt": "2026-07-18T00:00:00.000Z"
+  }
+]

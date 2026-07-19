@@ -10,16 +10,31 @@ function getBearerToken(req) {
   return authorization.slice(7).trim();
 }
 
+function getAuthToken(req) {
+  const bearerToken = getBearerToken(req);
+
+  if (bearerToken) {
+    return bearerToken;
+  }
+
+  return req.cookies?.bettyAuthToken || null;
+}
+
 function requireAuth(req, res, next) {
   try {
-    const token = getBearerToken(req);
+    const token = getAuthToken(req);
 
     if (!token) {
       return res.status(401).json({ error: "No autorizado." });
     }
 
     const user = verifyToken(token);
-    req.user = user;
+    req.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      displayName: user.displayName,
+    };
 
     return next();
   } catch (error) {

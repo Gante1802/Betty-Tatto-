@@ -18,6 +18,11 @@ const emailField = document.getElementById("emailField");
 const whatsappField = document.getElementById("whatsappField");
 const emailInput = emailField.querySelector('input[name="email"]');
 const whatsappInput = whatsappField.querySelector('input[name="whatsapp"]');
+const referencesInput = form.querySelector('input[name="references"]');
+
+const feedback = document.createElement("p");
+feedback.className = "booking-feedback";
+form.appendChild(feedback);
 
 function getFlashDesignInputs() {
   return document.querySelectorAll('input[name="flashDesign"]');
@@ -140,6 +145,117 @@ async function initializeBookingForm() {
 
 initializeBookingForm();
 
+function setFeedback(message, type) {
+  feedback.textContent = message;
+  feedback.className = `booking-feedback ${type || ""}`.trim();
+}
+
+function getAuthState() {
+  const raw = localStorage.getItem("bettyAuth");
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    if (!parsed || !parsed.token || !parsed.user) {
+      return null;
+    }
+
+    return parsed;
+  } catch (error) {
+    localStorage.removeItem("bettyAuth");
+    return null;
+  }
+}
+
+async function uploadReferenceImage(token) {
+  const file = referencesInput?.files?.[0];
+
+  if (!file) {
+    return null;
+  }
+
+  const uploadData = new FormData();
+  uploadData.append("image", file);
+
+  const uploadResponse = await fetch("/api/uploads/referencias-clientes", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: uploadData,
+    credentials: "include",
+  });
+
+  const uploadPayload = await uploadResponse.json();
+
+  if (!uploadResponse.ok) {
+    throw new Error(uploadPayload.error || "No se pudo subir la imagen de referencia.");
+  }
+
+  return uploadPayload?.data?.url || null;
+}
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const auth = getAuthState();
+
+  if (!auth) {
+    setFeedback("Debes iniciar sesion para reservar.", "error");
+    window.location.href = "/public/pages/login.html";
+    return;
+  }
+
+  const formData = new FormData(form);
+  const body = {
+    type: String(formData.get("type") || "").trim(),
+    name: String(formData.get("name") || "").trim(),
+    contactMethod: String(formData.get("contactMethod") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    whatsapp: String(formData.get("whatsapp") || "").trim(),
+    flashDesign: String(formData.get("flashDesign") || "").trim(),
+    idea: String(formData.get("idea") || "").trim(),
+    placement: String(formData.get("placement") || "").trim(),
+    size: String(formData.get("size") || "").trim(),
+    color: String(formData.get("color") || "").trim(),
+    style: String(formData.get("style") || "").trim(),
+  };
+
+  setFeedback("Enviando solicitud...", "success");
+
+  try {
+    const referenceImageUrl = await uploadReferenceImage(auth.token);
+
+    if (referenceImageUrl) {
+      body.referenceImageUrl = referenceImageUrl;
+    }
+
+    const response = await fetch("/api/bookings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth.token}`,
+      },
+      body: JSON.stringify(body),
+      credentials: "include",
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(payload.error || "No se pudo enviar la solicitud de cita.");
+    }
+
+    form.reset();
+    type.value = "";
+    updateForm();
+    updateContactFields();
+    setFeedback("Solicitud enviada. Betty te contactara pronto.", "success");
+  } catch (error) {
+    setFeedback(error.message, "error");
+  }
 });

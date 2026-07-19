@@ -1,5 +1,13 @@
 const authRaw = localStorage.getItem("bettyAuth");
-const auth = authRaw ? JSON.parse(authRaw) : null;
+let auth = null;
+
+if (authRaw) {
+  try {
+    auth = JSON.parse(authRaw);
+  } catch (error) {
+    localStorage.removeItem("bettyAuth");
+  }
+}
 
 if (!auth || !auth.token || !auth.user || auth.user.role !== "admin") {
   window.location.href = "/public/pages/login.html";
@@ -193,7 +201,16 @@ flashList.addEventListener("click", async (event) => {
   }
 });
 
-logoutButton.addEventListener("click", () => {
+logoutButton.addEventListener("click", async () => {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (error) {
+    // Ignore logout API errors and continue local cleanup.
+  }
+
   localStorage.removeItem("bettyAuth");
   document.cookie =
     "bettyAuthToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax";

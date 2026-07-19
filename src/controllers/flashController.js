@@ -1,24 +1,14 @@
-const fs = require("fs/promises");
-const path = require("path");
+const { ObjectId } = require("mongodb");
+const { flashesCollection } = require("../database/collections");
 
-const flashesFilePath = path.join(__dirname, "../../data/flashes.json");
-
-async function readFlashes() {
-  try {
-    const raw = await fs.readFile(flashesFilePath, "utf8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return [];
-    }
-
-    throw error;
-  }
-}
-
-async function writeFlashes(flashes) {
-  await fs.writeFile(flashesFilePath, JSON.stringify(flashes, null, 2), "utf8");
+function mapFlash(doc) {
+  return {
+    id: String(doc._id),
+    title: doc.title,
+    image: doc.image,
+    description: doc.description,
+    price: doc.price,
+  };
 }
 
 function validateFlashPayload(payload) {
@@ -33,8 +23,12 @@ function validateFlashPayload(payload) {
 
 async function listFlashes(req, res, next) {
   try {
-    const flashes = await readFlashes();
-    return res.status(200).json({ data: flashes });
+    const flashes = await flashesCollection()
+      .find({})
+      .sort({ _id: -1 })
+      .toArray();
+
+    return res.status(200).json({ data: flashes.map(mapFlash) });
   } catch (error) {
     return next(error);
   }
@@ -44,19 +38,17 @@ async function createFlash(req, res, next) {
   try {
     validateFlashPayload(req.body);
 
-    const flashes = await readFlashes();
     const newFlash = {
-      id: String(Date.now()),
       title: String(req.body.title).trim(),
       image: String(req.body.image).trim(),
       description: String(req.body.description).trim(),
       price: String(req.body.price).trim(),
     };
 
-    flashes.push(newFlash);
-    await writeFlashes(flashes);
+    const result = await flashesCollection().insertOne(newFlash);
+    newFlash._id = result.insertedId;
 
-    return res.status(201).json({ data: newFlash });
+    return res.status(201).json({ data: mapFlash(newFlash) });
   } catch (error) {
     return next(error);
   }
@@ -66,27 +58,29 @@ async function updateFlash(req, res, next) {
   try {
     validateFlashPayload(req.body);
 
-    const flashes = await readFlashes();
-    const targetIndex = flashes.findIndex(
-      (flash) => flash.id === req.params.id,
-    );
-
-    if (targetIndex === -1) {
+    if (!ObjectId.isValid(req.params.id)) {
       return res.status(404).json({ error: "Flash no encontrado." });
     }
 
+    const flashId = new ObjectId(req.params.id);
     const updatedFlash = {
-      id: flashes[targetIndex].id,
       title: String(req.body.title).trim(),
       image: String(req.body.image).trim(),
       description: String(req.body.description).trim(),
       price: String(req.body.price).trim(),
     };
 
-    flashes[targetIndex] = updatedFlash;
-    await writeFlashes(flashes);
+    const updateResult = await flashesCollection().updateOne(
+      { _id: flashId },
+      { $set: updatedFlash },
+    );
 
-    return res.status(200).json({ data: updatedFlash });
+    if (!updateResult.matchedCount) {
+      return res.status(404).json({ error: "Flash no encontrado." });
+    }
+
+    const savedFlash = await flashesCollection().findOne({ _id: flashId });
+    return res.status(200).json({ data: mapFlash(savedFlash) });
   } catch (error) {
     return next(error);
   }
@@ -94,16 +88,17 @@ async function updateFlash(req, res, next) {
 
 async function deleteFlash(req, res, next) {
   try {
-    const flashes = await readFlashes();
-    const filteredFlashes = flashes.filter(
-      (flash) => flash.id !== req.params.id,
-    );
-
-    if (filteredFlashes.length === flashes.length) {
+    if (!ObjectId.isValid(req.params.id)) {
       return res.status(404).json({ error: "Flash no encontrado." });
     }
 
-    await writeFlashes(filteredFlashes);
+    const result = await flashesCollection().deleteOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!result.deletedCount) {
+      return res.status(404).json({ error: "Flash no encontrado." });
+    }
 
     return res.status(200).json({ message: "Flash eliminado correctamente." });
   } catch (error) {

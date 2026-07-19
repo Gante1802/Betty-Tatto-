@@ -18,22 +18,77 @@
       <p class="subtitle">Ingresa como cliente o como administradora.</p>
 
       <div class="credentials">
-        <span>Demo usuario: cliente / cliente123</span>
-        <span>Demo admin: bettyadmin / betty123</span>
+        <span>Admin Betty: bettyadmin / betty123</span>
+        <span>Admin Diego: diegoadmin / diego123</span>
       </div>
 
-      <form id="login-form" autocomplete="on">
-        <label for="username">
+      <div
+        class="auth-switch"
+        role="tablist"
+        aria-label="Selector de autenticacion"
+      >
+        <button
+          id="tab-login"
+          type="button"
+          class="tab-button active"
+          role="tab"
+          aria-selected="true"
+        >
+          Iniciar sesion
+        </button>
+        <button
+          id="tab-register"
+          type="button"
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+        >
+          Registrarse
+        </button>
+      </div>
+
+      <form id="login-form" class="auth-form" autocomplete="on">
+        <label for="login-username">
           Usuario
-          <input id="username" name="username" type="text" required />
+          <input id="login-username" name="username" type="text" required />
         </label>
 
-        <label for="password">
+        <label for="login-password">
           Password
-          <input id="password" name="password" type="password" required />
+          <input id="login-password" name="password" type="password" required />
         </label>
 
         <button type="submit">Iniciar sesion</button>
+      </form>
+
+      <form id="register-form" class="auth-form hidden" autocomplete="on">
+        <label for="register-displayName">
+          Nombre
+          <input
+            id="register-displayName"
+            name="displayName"
+            type="text"
+            required
+          />
+        </label>
+
+        <label for="register-username">
+          Usuario
+          <input id="register-username" name="username" type="text" required />
+        </label>
+
+        <label for="register-password">
+          Password
+          <input
+            id="register-password"
+            name="password"
+            type="password"
+            minlength="6"
+            required
+          />
+        </label>
+
+        <button type="submit">Crear cuenta</button>
       </form>
 
       <p id="feedback" class="feedback"></p>
