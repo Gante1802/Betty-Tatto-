@@ -6,7 +6,8 @@ const authRateLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: {
-    error: "Demasiados intentos de autenticacion. Intenta de nuevo en unos minutos.",
+    error:
+      "Demasiados intentos de autenticacion. Intenta de nuevo en unos minutos.",
   },
 });
 

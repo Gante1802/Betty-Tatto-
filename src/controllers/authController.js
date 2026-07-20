@@ -85,9 +85,14 @@ async function seedLegacyUsersIfNeeded() {
       legacyUsers.map(async (legacyUser) => ({
         username: String(legacyUser.username || "").trim(),
         usernameNormalized: normalizeUsername(legacyUser.username),
-        displayName: String(legacyUser.displayName || legacyUser.username || "").trim(),
+        displayName: String(
+          legacyUser.displayName || legacyUser.username || "",
+        ).trim(),
         role: legacyUser.role === "admin" ? "admin" : "user",
-        passwordHash: await bcrypt.hash(String(legacyUser.password || ""), SALT_ROUNDS),
+        passwordHash: await bcrypt.hash(
+          String(legacyUser.password || ""),
+          SALT_ROUNDS,
+        ),
         createdAt: legacyUser.createdAt || new Date().toISOString(),
       })),
     );
@@ -170,7 +175,9 @@ async function register(req, res, next) {
     const users = usersCollection();
     const normalizedUsername = normalizeUsername(username);
 
-    const exists = await users.findOne({ usernameNormalized: normalizedUsername });
+    const exists = await users.findOne({
+      usernameNormalized: normalizedUsername,
+    });
 
     if (exists) {
       return res.status(409).json({ error: "Ese usuario ya existe." });

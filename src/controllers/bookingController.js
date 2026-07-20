@@ -3,7 +3,12 @@ const { bookingsCollection } = require("../database/collections");
 
 const ALLOWED_BOOKING_TYPES = new Set(["flash", "custom"]);
 const ALLOWED_CONTACT_METHODS = new Set(["email", "whatsapp"]);
-const ALLOWED_STATUSES = new Set(["pending", "contacted", "approved", "rejected"]);
+const ALLOWED_STATUSES = new Set([
+  "pending",
+  "contacted",
+  "approved",
+  "rejected",
+]);
 
 function normalizeText(value) {
   return String(value || "").trim();
@@ -176,7 +181,9 @@ async function updateBookingStatus(req, res, next) {
       return res.status(404).json({ error: "Solicitud no encontrada." });
     }
 
-    const updatedBooking = await bookingsCollection().findOne({ _id: bookingId });
+    const updatedBooking = await bookingsCollection().findOne({
+      _id: bookingId,
+    });
 
     return res.status(200).json({
       message: "Estado de solicitud actualizado.",

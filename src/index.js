@@ -6,14 +6,14 @@ const { connectToMongo } = require("./database/mongoClient");
 const port = process.env.PORT || 9000;
 
 async function startServer() {
-	await connectToMongo();
+  await connectToMongo();
 
-	app.listen(port, () => {
-		console.log(`Servidor escuchando en puerto ${port}`);
-	});
+  app.listen(port, () => {
+    console.log(`Servidor escuchando en puerto ${port}`);
+  });
 }
 
 startServer().catch((error) => {
-	console.error("No se pudo iniciar la aplicacion:", error.message);
-	process.exit(1);
+  console.error("No se pudo iniciar la aplicacion:", error.message);
+  process.exit(1);
 });

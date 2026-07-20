@@ -193,7 +193,9 @@ async function uploadReferenceImage(token) {
   const uploadPayload = await uploadResponse.json();
 
   if (!uploadResponse.ok) {
-    throw new Error(uploadPayload.error || "No se pudo subir la imagen de referencia.");
+    throw new Error(
+      uploadPayload.error || "No se pudo subir la imagen de referencia.",
+    );
   }
 
   return uploadPayload?.data?.url || null;
@@ -247,7 +249,9 @@ form.addEventListener("submit", async (event) => {
     const payload = await response.json();
 
     if (!response.ok) {
-      throw new Error(payload.error || "No se pudo enviar la solicitud de cita.");
+      throw new Error(
+        payload.error || "No se pudo enviar la solicitud de cita.",
+      );
     }
 
     form.reset();

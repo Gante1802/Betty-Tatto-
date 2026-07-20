@@ -16,7 +16,9 @@ async function connectToMongo() {
   db = client.db(mongoDbName);
 
   await Promise.all([
-    db.collection("users").createIndex({ usernameNormalized: 1 }, { unique: true }),
+    db
+      .collection("users")
+      .createIndex({ usernameNormalized: 1 }, { unique: true }),
     db.collection("bookings").createIndex({ userId: 1, createdAt: -1 }),
     db.collection("bookings").createIndex({ status: 1, createdAt: -1 }),
   ]);
