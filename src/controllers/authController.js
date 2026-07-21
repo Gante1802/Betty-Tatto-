@@ -50,12 +50,24 @@ function normalizeUsername(value) {
     .toLowerCase();
 }
 
+function normalizeEmail(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function isValidEmail(value) {
+  const email = normalizeEmail(value);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function buildAuthResponse(user, token) {
   return {
     token,
     user: {
       id: String(user._id),
       username: user.username,
+      email: user.email || null,
       role: user.role,
       displayName: user.displayName,
     },
@@ -69,11 +81,6 @@ async function seedLegacyUsersIfNeeded() {
 
   seedPromise = (async () => {
     const users = usersCollection();
-    const hasUsers = await users.findOne({}, { projection: { _id: 1 } });
-
-    if (hasUsers) {
-      return;
-    }
 
     const legacyUsers = await readLegacyUsers();
 
@@ -98,7 +105,15 @@ async function seedLegacyUsersIfNeeded() {
     );
 
     if (docs.length > 0) {
-      await users.insertMany(docs, { ordered: false });
+      await Promise.all(
+        docs.map((doc) =>
+          users.updateOne(
+            { usernameNormalized: doc.usernameNormalized },
+            { $setOnInsert: doc },
+            { upsert: true },
+          ),
+        ),
+      );
     }
   })().catch((error) => {
     seedPromise = null;
@@ -109,22 +124,26 @@ async function seedLegacyUsersIfNeeded() {
 }
 
 async function login(req, res, next) {
-  const { username, password } = req.body;
+  const { username, identifier, password } = req.body;
+  const loginIdentifier = String(identifier || username || "").trim();
 
-  if (!username || !password) {
+  if (!loginIdentifier || !password) {
     return res
       .status(400)
-      .json({ error: "Usuario y password son obligatorios." });
+      .json({ error: "Usuario o correo y password son obligatorios." });
   }
 
   try {
     await seedLegacyUsersIfNeeded();
 
-    const normalizedUsername = normalizeUsername(username);
+    const normalizedIdentifier = normalizeUsername(loginIdentifier);
     const users = usersCollection();
 
     const matchedUser = await users.findOne({
-      usernameNormalized: normalizedUsername,
+      $or: [
+        { usernameNormalized: normalizedIdentifier },
+        { emailNormalized: normalizedIdentifier },
+      ],
     });
 
     if (!matchedUser) {
@@ -155,12 +174,18 @@ async function login(req, res, next) {
 }
 
 async function register(req, res, next) {
-  const { username, password, displayName } = req.body;
+  const { email, password, displayName } = req.body;
 
-  if (!username || !password || !displayName) {
+  if (!email || !password || !displayName) {
     return res
       .status(400)
-      .json({ error: "Usuario, nombre y password son obligatorios." });
+      .json({ error: "Correo, nombre y password son obligatorios." });
+  }
+
+  if (!isValidEmail(email)) {
+    return res
+      .status(400)
+      .json({ error: "El correo electronico no es valido." });
   }
 
   if (String(password).length < 6) {
@@ -173,21 +198,23 @@ async function register(req, res, next) {
     await seedLegacyUsersIfNeeded();
 
     const users = usersCollection();
-    const normalizedUsername = normalizeUsername(username);
+    const normalizedEmail = normalizeEmail(email);
 
     const exists = await users.findOne({
-      usernameNormalized: normalizedUsername,
+      emailNormalized: normalizedEmail,
     });
 
     if (exists) {
-      return res.status(409).json({ error: "Ese usuario ya existe." });
+      return res.status(409).json({ error: "Ese correo ya existe." });
     }
 
     const passwordHash = await bcrypt.hash(String(password), SALT_ROUNDS);
 
     const newUser = {
-      username: String(username).trim(),
-      usernameNormalized: normalizedUsername,
+      username: String(email).trim(),
+      usernameNormalized: normalizedEmail,
+      email: String(email).trim(),
+      emailNormalized: normalizedEmail,
       passwordHash,
       role: "user",
       displayName: String(displayName).trim(),
@@ -200,6 +227,7 @@ async function register(req, res, next) {
     const token = createToken({
       id: String(newUser._id),
       username: newUser.username,
+      email: newUser.email,
       role: newUser.role,
       displayName: newUser.displayName,
     });

@@ -47,7 +47,7 @@
 
 .hero {
   padding: 80px 0;
-  background-image: url("https://res.cloudinary.com/detw8kzsv/image/upload/v1783821521/hero_sqmptz.jpg");
+  background-image: url("/public/assets/images/brand/hero.jpg");
   background-size: cover;
   background-position: center;
   height: 70vh;
