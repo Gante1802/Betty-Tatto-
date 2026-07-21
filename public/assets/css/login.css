@@ -1,13 +1,13 @@
 :root {
-  --bg: #100b08;
-  --panel: #1b1410;
-  --panel-border: #3b2e27;
-  --accent: #f07f47;
-  --accent-dark: #b95b2f;
-  --text: #f5eee9;
-  --muted: #cfb7a8;
+  --bg: #0a0a0a;
+  --panel: #171118;
+  --panel-border: #4a3155;
+  --accent: #7a3fbf;
+  --accent-dark: #5f2f98;
+  --text: #f5f5f5;
+  --muted: #d4c1e2;
   --error: #ff7d7d;
-  --ok: #93f2b4;
+  --ok: #10b981;
 }
 
 * {
@@ -19,10 +19,7 @@ body {
   min-height: 100vh;
   font-family: "Cormorant Garamond", serif;
   color: var(--text);
-  background:
-    radial-gradient(circle at 20% 15%, #2b1a11 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, #4a2516 0%, transparent 40%),
-    linear-gradient(145deg, #0a0908 0%, #130f0c 55%, #1b120d 100%);
+  background: var(--bg);
   display: grid;
   place-items: center;
   padding: 24px;
@@ -31,7 +28,7 @@ body {
 .login-shell {
   width: 100%;
   max-width: 440px;
-  background: linear-gradient(180deg, #1b1410 0%, #17100c 100%);
+  background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: 20px;
   padding: 28px;
@@ -58,7 +55,7 @@ body {
   gap: 8px;
   margin: 0 0 18px;
   padding: 12px;
-  border: 1px dashed #5a4438;
+  border: 1px dashed #4c3a62;
   border-radius: 12px;
   font-size: 0.95rem;
   color: var(--muted);
@@ -72,8 +69,8 @@ body {
 }
 
 .tab-button {
-  border: 1px solid #5f4638;
-  background: #221712;
+  border: 1px solid #47345f;
+  background: #1b1425;
   color: var(--text);
   border-radius: 10px;
   padding: 10px;
@@ -82,11 +79,7 @@ body {
 }
 
 .tab-button.active {
-  background: linear-gradient(
-    135deg,
-    var(--accent) 0%,
-    var(--accent-dark) 100%
-  );
+  background: var(--accent);
   border-color: var(--accent-dark);
 }
 
@@ -104,14 +97,14 @@ input {
   margin-bottom: 14px;
   padding: 11px 12px;
   border-radius: 10px;
-  border: 1px solid #5f4638;
-  background: #241a14;
+  border: 1px solid #47345f;
+  background: #1a1423;
   color: var(--text);
   font-size: 1rem;
 }
 
 input:focus {
-  outline: 2px solid rgba(240, 127, 71, 0.35);
+  outline: 2px solid rgba(122, 63, 191, 0.35);
   border-color: var(--accent);
 }
 
@@ -123,16 +116,14 @@ button {
   font-weight: 700;
   font-size: 1rem;
   color: #fff;
-  background: linear-gradient(
-    135deg,
-    var(--accent) 0%,
-    var(--accent-dark) 100%
-  );
+  background: var(--accent-dark);
   cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-  filter: brightness(1.05);
+  background: var(--ok);
+  color: var(--bg);
 }
 
 .feedback {
@@ -156,7 +147,11 @@ button:hover {
 .back-link {
   display: inline-block;
   margin-top: 14px;
-  color: #efcbb5;
+  color: #cab4df;
+}
+
+.back-link:hover {
+  color: #10b981;
 }
 
 @media (max-width: 500px) {

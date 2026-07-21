@@ -1,10 +1,11 @@
 :root {
-  --bg: #171118;
-  --card: #221625;
-  --border: #4a314f;
-  --text: #f6edf7;
-  --muted: #d0bfd3;
-  --accent: #f3ba4f;
+  --bg: #0a0a0a;
+  --card: #171118;
+  --border: #4a3155;
+  --text: #f5f5f5;
+  --muted: #cdbdd8;
+  --accent: #10b981;
+  --accent-2: #7a3fbf;
 }
 
 * {
@@ -15,9 +16,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: "Cormorant Garamond", serif;
-  background:
-    radial-gradient(circle at 10% 10%, #35203c 0%, transparent 44%),
-    radial-gradient(circle at 85% 85%, #3f2829 0%, transparent 44%), var(--bg);
+  background: var(--bg);
   color: var(--text);
   display: grid;
   place-items: center;
@@ -27,7 +26,7 @@ body {
 .card {
   width: 100%;
   max-width: 520px;
-  background: linear-gradient(180deg, #241729 0%, #1f1521 100%);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 24px;
@@ -52,17 +51,26 @@ button {
   border: 0;
   border-radius: 10px;
   padding: 10px 14px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.05rem;
   text-decoration: none;
   font-weight: 700;
+  transition: 0.3s;
 }
 
 a {
-  background: #3b2740;
+  background: var(--accent-2);
   color: var(--text);
 }
 
 button {
-  background: var(--accent);
-  color: #261404;
+  background: var(--accent-2);
+  color: var(--text);
   cursor: pointer;
+}
+
+a:hover,
+button:hover {
+  background: var(--accent);
+  color: var(--bg);
 }

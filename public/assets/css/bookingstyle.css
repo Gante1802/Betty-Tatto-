@@ -1,25 +1,42 @@
+:root {
+  --bg: #0a0a0a;
+  --panel: #171118;
+  --panel-border: #4d335f;
+  --text: #f5f5f5;
+  --muted: #cab7d6;
+  --accent: #7a3fbf;
+  --accent-dark: #5f2f98;
+  --ok: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background: #0f0f0f;
-  color: #f2f2f2;
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  background: var(--bg);
+  color: var(--text);
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: 40px 20px;
 }
 
 .form-container {
   width: 100%;
-  max-width: 500px;
-  background: #1a1a1a;
+  max-width: 640px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
   padding: 25px;
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .title {
   text-align: center;
   margin-bottom: 20px;
-  font-size: 22px;
+  font-size: 2rem;
 }
 
 .section {
@@ -54,9 +71,9 @@ body {
 .flash-option {
   display: block;
   padding: 10px;
-  border: 1px solid #333;
+  border: 1px solid #3d2e50;
   border-radius: 12px;
-  background: #222;
+  background: #1a1424;
   cursor: pointer;
   transition:
     border-color 0.2s ease,
@@ -64,11 +81,11 @@ body {
 }
 
 .flash-option:hover {
-  border-color: #888;
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
-.flash-option input {
+.flash-option input[type="radio"] {
   margin-bottom: 8px;
 }
 
@@ -84,7 +101,7 @@ body {
 .flash-option span {
   display: block;
   font-size: 14px;
-  color: #f2f2f2;
+  color: var(--text);
 }
 
 .flash-option-title {
@@ -96,7 +113,7 @@ body {
 .flash-option-description {
   font-size: 13px;
   line-height: 1.4;
-  color: #cfcfcf;
+  color: var(--muted);
   margin-bottom: 8px;
 }
 
@@ -108,9 +125,9 @@ body {
 
 .flash-selection-details {
   padding: 14px;
-  border: 1px solid #333;
+  border: 1px solid #3d2e50;
   border-radius: 12px;
-  background: #202020;
+  background: #181321;
 }
 
 .flash-selection-label {
@@ -118,7 +135,7 @@ body {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #b8b8b8;
+  color: var(--muted);
 }
 
 .flash-selection-details h4,
@@ -137,20 +154,42 @@ body {
 
 label {
   margin-bottom: 6px;
-  font-size: 14px;
-  color: #cccccc;
+  font-size: 1rem;
+  color: var(--muted);
 }
 
-input,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
 select,
 textarea {
   padding: 10px;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #4b3762;
   outline: none;
-  background: #2a2a2a;
-  color: white;
-  font-size: 14px;
+  background: #1a1424;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+input[type="file"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #4b3762;
+  background: #1a1424;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(122, 63, 191, 0.25);
 }
 
 textarea {
@@ -160,28 +199,45 @@ textarea {
 
 hr {
   border: none;
-  border-top: 1px solid #333;
+  border-top: 1px solid #3d2e50;
   margin: 20px 0;
 }
 
 .btn {
   width: 100%;
   padding: 12px;
-  background: #ffffff;
-  color: #000;
+  background: var(--accent-dark);
+  color: #fff;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s ease;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: 0.3s;
 }
 
 .btn:hover {
-  background: #e6e6e6;
+  background: var(--ok);
+  color: var(--bg);
 }
 
 .hidden {
   display: none;
+}
+
+.booking-feedback {
+  min-height: 24px;
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.booking-feedback.success {
+  color: var(--ok);
+}
+
+.booking-feedback.error {
+  color: #ff7d7d;
 }
 
 @media (max-width: 560px) {

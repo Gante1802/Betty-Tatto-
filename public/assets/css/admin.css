@@ -1,10 +1,11 @@
 :root {
-  --bg: #0e1116;
-  --panel: #171d26;
-  --panel-border: #283241;
-  --text: #f3f6fa;
-  --muted: #b2bfcc;
-  --accent: #2eaadc;
+  --bg: #0a0a0a;
+  --panel: #171118;
+  --panel-border: #5d3d73;
+  --text: #f5f5f5;
+  --muted: #cbb7d8;
+  --accent: #10b981;
+  --accent-2: #7a3fbf;
   --danger: #ff6f7e;
   --success: #58d89a;
 }
@@ -18,16 +19,14 @@ body {
   min-height: 100vh;
   font-family: "Cormorant Garamond", serif;
   color: var(--text);
-  background:
-    radial-gradient(circle at 80% 10%, #12283a 0%, transparent 36%),
-    radial-gradient(circle at 20% 90%, #1d1932 0%, transparent 34%), var(--bg);
+  background: var(--bg);
   padding: 24px;
 }
 
 .panel {
   max-width: 1100px;
   margin: 0 auto;
-  background: linear-gradient(180deg, #121821 0%, #121821 100%);
+  background: var(--panel);
   border: 1px solid var(--panel-border);
   border-radius: 18px;
   padding: 24px;
@@ -50,28 +49,44 @@ p {
   color: var(--muted);
 }
 
+h1,
+h2,
+h3 {
+  color: var(--text);
+}
+
 button,
 .btn-link {
   border: 0;
   border-radius: 10px;
-  padding: 9px 12px;
+  padding: 10px 14px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .primary {
-  background: var(--accent);
-  color: #081722;
+  background: var(--accent-2);
+  color: var(--text);
 }
 
 .secondary {
-  background: #2a3647;
+  background: var(--accent-2);
   color: var(--text);
 }
 
 .danger {
   background: var(--danger);
   color: #2b0910;
+}
+
+.primary:hover,
+.secondary:hover,
+.danger:hover {
+  background: var(--accent);
+  color: var(--bg);
 }
 
 .form-grid {
@@ -96,9 +111,15 @@ textarea {
   width: 100%;
   padding: 10px;
   border-radius: 10px;
-  border: 1px solid #304056;
-  background: #101722;
+  border: 1px solid #4a3563;
+  background: #171222;
   color: var(--text);
+}
+
+input:focus,
+textarea:focus {
+  outline: 2px solid rgba(122, 63, 191, 0.35);
+  border-color: #7a3fbf;
 }
 
 textarea {
@@ -113,10 +134,10 @@ textarea {
 }
 
 .flash-item {
-  border: 1px solid #2f3b4c;
+  border: 1px solid #3f2f53;
   border-radius: 12px;
   padding: 10px;
-  background: #111925;
+  background: #15111e;
 }
 
 .flash-item img {
@@ -129,6 +150,10 @@ textarea {
 
 .flash-item h3 {
   margin: 0 0 4px;
+}
+
+.flash-item strong {
+  color: #10b981;
 }
 
 .flash-actions {
