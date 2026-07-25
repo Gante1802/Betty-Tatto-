@@ -71,6 +71,52 @@
             disabled
           />
         </div>
+
+        <div class="field">
+          <label>Fecha de la cita</label>
+          <input
+            id="appointmentDate"
+            type="hidden"
+            name="appointmentDate"
+            required
+          />
+          <div class="calendar-shell">
+            <div class="calendar-header">
+              <button
+                id="booking-calendar-prev"
+                class="secondary"
+                type="button"
+              >
+                Mes anterior
+              </button>
+              <h4 id="booking-calendar-label" class="calendar-label"></h4>
+              <button
+                id="booking-calendar-next"
+                class="secondary"
+                type="button"
+              >
+                Mes siguiente
+              </button>
+            </div>
+
+            <div class="calendar-weekdays">
+              <span>Lun</span>
+              <span>Mar</span>
+              <span>Mie</span>
+              <span>Jue</span>
+              <span>Vie</span>
+              <span>Sab</span>
+              <span>Dom</span>
+            </div>
+
+            <div id="booking-calendar-grid" class="calendar-grid"></div>
+          </div>
+
+          <label for="appointmentTime">Hora disponible</label>
+          <select id="appointmentTime" name="appointmentTime" required disabled>
+            <option value="">Primero selecciona una fecha</option>
+          </select>
+        </div>
       </div>
 
       <hr />

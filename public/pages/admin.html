@@ -19,9 +19,56 @@
           <h1>Panel de flashes</h1>
           <p>Aqui Betty puede crear, editar o eliminar flashes.</p>
         </div>
-        <button id="logout-btn" class="secondary">Cerrar sesion</button>
+        <div class="header-actions">
+          <a class="btn-link secondary" href="/public/index.html"
+            >Ir a inicio</a
+          >
+          <button id="logout-btn" class="secondary">Cerrar sesion</button>
+        </div>
       </header>
+      <section>
+        <h2>Calendario de disponibilidad</h2>
+        <p class="availability-hint">
+          Toca un dia para activarlo o desactivarlo.
+        </p>
 
+        <div class="calendar-shell">
+          <div class="calendar-header">
+            <button id="admin-calendar-prev" class="secondary" type="button">
+              Mes anterior
+            </button>
+            <h3 id="admin-calendar-label" class="calendar-label"></h3>
+            <button id="admin-calendar-next" class="secondary" type="button">
+              Mes siguiente
+            </button>
+          </div>
+
+          <div class="calendar-weekdays">
+            <span>Lun</span>
+            <span>Mar</span>
+            <span>Mie</span>
+            <span>Jue</span>
+            <span>Vie</span>
+            <span>Sab</span>
+            <span>Dom</span>
+          </div>
+
+          <div id="admin-calendar-grid" class="calendar-grid"></div>
+        </div>
+
+        <div id="slot-editor" class="slot-editor hidden">
+          <h3>Horarios para <span id="slot-editor-date"></span></h3>
+          <form id="slot-form" class="slot-form">
+            <label for="slot-time-input">Agregar hora</label>
+            <div class="slot-form-row">
+              <input id="slot-time-input" name="time" type="time" required />
+              <button class="primary" type="submit">Agregar</button>
+            </div>
+          </form>
+
+          <div id="slot-list" class="slot-list"></div>
+        </div>
+      </section>
       <section>
         <h2 id="form-title">Crear nuevo flash</h2>
         <form id="flash-form" class="form-grid">
@@ -60,7 +107,6 @@
 
         <p id="feedback" class="feedback"></p>
       </section>
-
       <section>
         <h2>Catalogo actual</h2>
         <div id="flash-list" class="flash-list"></div>

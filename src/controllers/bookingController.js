@@ -1,5 +1,8 @@
 const { ObjectId } = require("mongodb");
-const { bookingsCollection } = require("../database/collections");
+const {
+  bookingsCollection,
+  availableDatesCollection,
+} = require("../database/collections");
 
 const ALLOWED_BOOKING_TYPES = new Set(["flash", "custom"]);
 const ALLOWED_CONTACT_METHODS = new Set(["email", "whatsapp"]);
@@ -9,6 +12,22 @@ const ALLOWED_STATUSES = new Set([
   "approved",
   "rejected",
 ]);
+const OCCUPIED_STATUSES = ["pending", "contacted", "approved"];
+const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+// Horarios por defecto por cada dia disponible.
+// Cambia esta lista si quieres nuevos horarios.
+const DEFAULT_DAILY_SLOTS = [
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+];
 
 function normalizeText(value) {
   return String(value || "").trim();
@@ -18,6 +37,8 @@ function validateBookingPayload(payload) {
   const type = normalizeText(payload.type);
   const name = normalizeText(payload.name);
   const contactMethod = normalizeText(payload.contactMethod);
+  const appointmentDate = normalizeText(payload.appointmentDate);
+  const appointmentTime = normalizeText(payload.appointmentTime);
 
   if (!ALLOWED_BOOKING_TYPES.has(type)) {
     throw new Error("Tipo de cita invalido.");
@@ -29,6 +50,14 @@ function validateBookingPayload(payload) {
 
   if (!ALLOWED_CONTACT_METHODS.has(contactMethod)) {
     throw new Error("Metodo de contacto invalido.");
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(appointmentDate)) {
+    throw new Error("Debes seleccionar una fecha valida para la cita.");
+  }
+
+  if (!TIME_PATTERN.test(appointmentTime)) {
+    throw new Error("Debes seleccionar una hora valida para la cita.");
   }
 
   if (contactMethod === "email" && !normalizeText(payload.email)) {
@@ -60,6 +89,8 @@ function mapBooking(doc) {
     userId: doc.userId,
     username: doc.username,
     userDisplayName: doc.userDisplayName,
+    appointmentDate: doc.appointmentDate || null,
+    appointmentTime: doc.appointmentTime || null,
     type: doc.type,
     status: doc.status,
     name: doc.name,
@@ -78,15 +109,65 @@ function mapBooking(doc) {
   };
 }
 
+function normalizeSlots(slots) {
+  const values = Array.isArray(slots) ? slots : [];
+  const cleaned = [
+    ...new Set(values.map((slot) => normalizeText(slot))),
+  ].filter((slot) => TIME_PATTERN.test(slot));
+
+  cleaned.sort();
+  return cleaned;
+}
+
+function slotsForDay(slots) {
+  const normalized = normalizeSlots(slots);
+  return normalized.length ? normalized : [...DEFAULT_DAILY_SLOTS];
+}
+
 async function createBooking(req, res, next) {
   try {
     validateBookingPayload(req.body);
+    const appointmentDate = normalizeText(req.body.appointmentDate);
+    const appointmentTime = normalizeText(req.body.appointmentTime);
+
+    const availability = await availableDatesCollection().findOne({
+      date: appointmentDate,
+    });
+
+    if (!availability) {
+      return res.status(400).json({
+        error:
+          "La fecha seleccionada no esta disponible. Elige una fecha habilitada por Betty.",
+      });
+    }
+
+    const availableSlots = slotsForDay(availability.slots);
+
+    if (!availableSlots.includes(appointmentTime)) {
+      return res.status(400).json({
+        error: "La hora seleccionada no esta disponible para la fecha elegida.",
+      });
+    }
+
+    const hasOverlap = await bookingsCollection().findOne({
+      appointmentDate,
+      appointmentTime,
+      status: { $in: OCCUPIED_STATUSES },
+    });
+
+    if (hasOverlap) {
+      return res.status(409).json({
+        error: "Ese horario ya fue reservado. Elige otra hora disponible.",
+      });
+    }
 
     const now = new Date().toISOString();
     const bookingDoc = {
       userId: req.user.id,
       username: req.user.username,
       userDisplayName: req.user.displayName,
+      appointmentDate,
+      appointmentTime,
       type: normalizeText(req.body.type),
       status: "pending",
       name: normalizeText(req.body.name),

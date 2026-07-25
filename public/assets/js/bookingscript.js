@@ -20,6 +20,19 @@ const emailInput = emailField.querySelector('input[name="email"]');
 const whatsappInput = whatsappField.querySelector('input[name="whatsapp"]');
 const referencesInput = form.querySelector('input[name="references"]');
 
+const appointmentDateInput = document.getElementById("appointmentDate");
+const appointmentTimeInput = document.getElementById("appointmentTime");
+const availabilityHelp = document.getElementById("availability-help");
+
+const bookingCalendarGrid = document.getElementById("booking-calendar-grid");
+const bookingCalendarLabel = document.getElementById("booking-calendar-label");
+const bookingCalendarPrev = document.getElementById("booking-calendar-prev");
+const bookingCalendarNext = document.getElementById("booking-calendar-next");
+
+let availabilityMap = new Map();
+let bookingCalendarMonthDate = new Date();
+bookingCalendarMonthDate.setDate(1);
+
 const feedback = document.createElement("p");
 feedback.className = "booking-feedback";
 form.appendChild(feedback);
@@ -101,49 +114,205 @@ function updateForm() {
   }
 }
 
-type.addEventListener("change", updateForm);
-
-contactMethodInputs.forEach((input) => {
-  input.addEventListener("change", updateContactFields);
-});
-
-flashOptionsContainer.addEventListener("change", (event) => {
-  if (event.target.matches('input[name="flashDesign"]')) {
-    updateFlashSelectionDetails();
-  }
-});
-
-async function initializeBookingForm() {
-  if (typeof window.loadFlashCatalog === "function") {
-    await window.loadFlashCatalog();
-  }
-
-  window.renderFlashOptions(flashOptionsContainer);
-
-  const searchParams = new URLSearchParams(window.location.search);
-  const preselectedType = searchParams.get("type");
-  const preselectedFlash = searchParams.get("flash");
-
-  if (preselectedType === "flash") {
-    type.value = "flash";
-  }
-
-  if (preselectedFlash) {
-    const flashInput = document.querySelector(
-      `input[name="flashDesign"][value="${preselectedFlash}"]`,
-    );
-
-    if (flashInput) {
-      flashInput.checked = true;
-    }
-  }
-
-  updateForm();
-  updateFlashSelectionDetails();
-  updateContactFields();
+function normalizeSlots(slots) {
+  const values = Array.isArray(slots) ? slots : [];
+  const unique = [
+    ...new Set(values.map((slot) => String(slot || "").trim())),
+  ].filter(Boolean);
+  unique.sort();
+  return unique;
 }
 
-initializeBookingForm();
+function formatDateLabel(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateValue;
+  }
+
+  return date.toLocaleDateString("es-ES", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+function getDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getTodayDateValue() {
+  return getDateKey(new Date());
+}
+
+function renderBookingCalendar() {
+  const year = bookingCalendarMonthDate.getFullYear();
+  const monthIndex = bookingCalendarMonthDate.getMonth();
+  const firstDay = new Date(year, monthIndex, 1);
+  const lastDay = new Date(year, monthIndex + 1, 0);
+  const leadingBlanks = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = lastDay.getDate();
+  const today = getTodayDateValue();
+  const selectedDate = String(appointmentDateInput.value || "").trim();
+
+  bookingCalendarLabel.textContent = firstDay.toLocaleDateString("es-ES", {
+    month: "long",
+    year: "numeric",
+  });
+
+  const cells = [];
+
+  for (let index = 0; index < leadingBlanks; index += 1) {
+    cells.push('<span class="calendar-cell empty"></span>');
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = new Date(year, monthIndex, day);
+    const dateKey = getDateKey(date);
+    const hasAvailability = availabilityMap.has(dateKey);
+    const isToday = dateKey === today;
+    const isPast = dateKey < today;
+    const isSelected = selectedDate === dateKey;
+    const isSelectable = hasAvailability && !isPast;
+
+    cells.push(`
+      <button
+        type="button"
+        class="calendar-cell day ${hasAvailability ? "available" : ""} ${isSelected ? "selected" : ""} ${isToday ? "today" : ""}"
+        data-date="${dateKey}"
+        ${isSelectable ? "" : "disabled"}
+        aria-pressed="${isSelected ? "true" : "false"}"
+      >
+        ${day}
+      </button>
+    `);
+  }
+
+  bookingCalendarGrid.innerHTML = cells.join("");
+}
+
+function renderAvailabilityHelp() {
+  if (!availabilityHelp) {
+    return;
+  }
+
+  const sortedDates = [...availabilityMap.keys()].sort();
+
+  if (!sortedDates.length) {
+    availabilityHelp.textContent = "";
+    return;
+  }
+
+  availabilityHelp.textContent = "";
+}
+
+function setAppointmentTimeOptions(dateValue) {
+  const slots = availabilityMap.has(dateValue)
+    ? normalizeSlots(availabilityMap.get(dateValue).slots)
+    : [];
+
+  appointmentTimeInput.innerHTML = "";
+
+  if (!slots.length) {
+    appointmentTimeInput.disabled = true;
+    appointmentTimeInput.required = true;
+    appointmentTimeInput.innerHTML =
+      '<option value="">No hay horas configuradas para esta fecha</option>';
+    appointmentTimeInput.value = "";
+    return;
+  }
+
+  appointmentTimeInput.disabled = false;
+  appointmentTimeInput.required = true;
+  appointmentTimeInput.innerHTML =
+    '<option value="">Selecciona una hora</option>' +
+    slots.map((slot) => `<option value="${slot}">${slot}</option>`).join("");
+
+  if (!slots.includes(appointmentTimeInput.value)) {
+    appointmentTimeInput.value = "";
+  }
+}
+
+function selectAppointmentDate(dateValue) {
+  appointmentDateInput.value = dateValue;
+  setAppointmentTimeOptions(dateValue);
+  renderBookingCalendar();
+}
+
+function updateAppointmentDateValidation() {
+  const selectedDate = String(appointmentDateInput.value || "").trim();
+
+  if (!selectedDate) {
+    appointmentDateInput.setCustomValidity("Selecciona una fecha disponible.");
+    return;
+  }
+
+  if (!availabilityMap.has(selectedDate)) {
+    appointmentDateInput.setCustomValidity(
+      "Selecciona una fecha habilitada por Betty.",
+    );
+    return;
+  }
+
+  appointmentDateInput.setCustomValidity("");
+}
+
+function updateAppointmentTimeValidation() {
+  const selectedDate = String(appointmentDateInput.value || "").trim();
+  const selectedTime = String(appointmentTimeInput.value || "").trim();
+  const slots = availabilityMap.has(selectedDate)
+    ? normalizeSlots(availabilityMap.get(selectedDate).slots)
+    : [];
+
+  if (!selectedTime) {
+    appointmentTimeInput.setCustomValidity("Selecciona una hora disponible.");
+    return;
+  }
+
+  if (!slots.includes(selectedTime)) {
+    appointmentTimeInput.setCustomValidity(
+      "La hora seleccionada no esta disponible en esa fecha.",
+    );
+    return;
+  }
+
+  appointmentTimeInput.setCustomValidity("");
+}
+
+async function loadAvailability() {
+  const response = await fetch("/api/availability");
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload.error || "No se pudo cargar la disponibilidad.");
+  }
+
+  const dates = Array.isArray(payload.data) ? payload.data : [];
+  availabilityMap = new Map(
+    dates.map((item) => [item.date, { slots: normalizeSlots(item.slots) }]),
+  );
+
+  const selectedDate = String(appointmentDateInput.value || "").trim();
+
+  if (!selectedDate || !availabilityMap.has(selectedDate)) {
+    appointmentDateInput.value = "";
+    appointmentTimeInput.value = "";
+    appointmentTimeInput.disabled = true;
+    appointmentTimeInput.innerHTML =
+      '<option value="">Primero selecciona una fecha</option>';
+  } else {
+    setAppointmentTimeOptions(selectedDate);
+  }
+
+  renderAvailabilityHelp();
+  renderBookingCalendar();
+  updateAppointmentDateValidation();
+  updateAppointmentTimeValidation();
+}
 
 function setFeedback(message, type) {
   feedback.textContent = message;
@@ -201,6 +370,54 @@ async function uploadReferenceImage(token) {
   return uploadPayload?.data?.url || null;
 }
 
+type.addEventListener("change", updateForm);
+
+contactMethodInputs.forEach((input) => {
+  input.addEventListener("change", updateContactFields);
+});
+
+flashOptionsContainer.addEventListener("change", (event) => {
+  if (event.target.matches('input[name="flashDesign"]')) {
+    updateFlashSelectionDetails();
+  }
+});
+
+bookingCalendarPrev.addEventListener("click", () => {
+  bookingCalendarMonthDate = new Date(
+    bookingCalendarMonthDate.getFullYear(),
+    bookingCalendarMonthDate.getMonth() - 1,
+    1,
+  );
+  renderBookingCalendar();
+});
+
+bookingCalendarNext.addEventListener("click", () => {
+  bookingCalendarMonthDate = new Date(
+    bookingCalendarMonthDate.getFullYear(),
+    bookingCalendarMonthDate.getMonth() + 1,
+    1,
+  );
+  renderBookingCalendar();
+});
+
+bookingCalendarGrid.addEventListener("click", (event) => {
+  const date = event.target.dataset.date;
+
+  if (!date || !availabilityMap.has(date)) {
+    return;
+  }
+
+  selectAppointmentDate(date);
+  updateAppointmentDateValidation();
+  updateAppointmentTimeValidation();
+  appointmentDateInput.reportValidity();
+});
+
+appointmentTimeInput.addEventListener("change", () => {
+  updateAppointmentTimeValidation();
+  appointmentTimeInput.reportValidity();
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -212,8 +429,17 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  updateAppointmentDateValidation();
+  updateAppointmentTimeValidation();
+
+  if (!form.reportValidity()) {
+    return;
+  }
+
   const formData = new FormData(form);
   const body = {
+    appointmentDate: String(formData.get("appointmentDate") || "").trim(),
+    appointmentTime: String(formData.get("appointmentTime") || "").trim(),
     type: String(formData.get("type") || "").trim(),
     name: String(formData.get("name") || "").trim(),
     contactMethod: String(formData.get("contactMethod") || "").trim(),
@@ -256,10 +482,58 @@ form.addEventListener("submit", async (event) => {
 
     form.reset();
     type.value = "";
+    appointmentDateInput.value = "";
+    appointmentTimeInput.innerHTML =
+      '<option value="">Primero selecciona una fecha</option>';
+    appointmentTimeInput.disabled = true;
     updateForm();
     updateContactFields();
+    renderBookingCalendar();
     setFeedback("Solicitud enviada. Betty te contactara pronto.", "success");
   } catch (error) {
     setFeedback(error.message, "error");
   }
 });
+
+async function initializeBookingForm() {
+  if (typeof window.loadFlashCatalog === "function") {
+    await window.loadFlashCatalog();
+  }
+
+  try {
+    await loadAvailability();
+  } catch (error) {
+    availabilityMap = new Map();
+    appointmentTimeInput.disabled = true;
+    appointmentTimeInput.innerHTML =
+      '<option value="">No se pudo cargar disponibilidad</option>';
+    availabilityHelp.textContent =
+      "No se pudo cargar la disponibilidad. Recarga la pagina.";
+  }
+
+  window.renderFlashOptions(flashOptionsContainer);
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const preselectedType = searchParams.get("type");
+  const preselectedFlash = searchParams.get("flash");
+
+  if (preselectedType === "flash") {
+    type.value = "flash";
+  }
+
+  if (preselectedFlash) {
+    const flashInput = document.querySelector(
+      `input[name="flashDesign"][value="${preselectedFlash}"]`,
+    );
+
+    if (flashInput) {
+      flashInput.checked = true;
+    }
+  }
+
+  updateForm();
+  updateFlashSelectionDetails();
+  updateContactFields();
+}
+
+initializeBookingForm();

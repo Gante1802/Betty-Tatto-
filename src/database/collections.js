@@ -12,8 +12,13 @@ function bookingsCollection() {
   return getDb().collection("bookings");
 }
 
+function availableDatesCollection() {
+  return getDb().collection("available_dates");
+}
+
 module.exports = {
   usersCollection,
   flashesCollection,
   bookingsCollection,
+  availableDatesCollection,
 };

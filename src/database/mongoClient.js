@@ -24,6 +24,10 @@ async function connectToMongo() {
       .createIndex({ emailNormalized: 1 }, { unique: true, sparse: true }),
     db.collection("bookings").createIndex({ userId: 1, createdAt: -1 }),
     db.collection("bookings").createIndex({ status: 1, createdAt: -1 }),
+    db
+      .collection("bookings")
+      .createIndex({ appointmentDate: 1, appointmentTime: 1, status: 1 }),
+    db.collection("available_dates").createIndex({ date: 1 }, { unique: true }),
   ]);
 
   console.log(`MongoDB conectado (${mongoDbName}).`);

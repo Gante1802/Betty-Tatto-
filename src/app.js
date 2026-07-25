@@ -8,6 +8,7 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const authRoutes = require("./routes/authRoutes");
 const flashRoutes = require("./routes/flashRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
+const availabilityRoutes = require("./routes/availabilityRoutes");
 const { authRateLimiter } = require("./middlewares/rateLimiters");
 
 const app = express();
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRateLimiter, authRoutes);
 app.use("/api/flashes", flashRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/availability", availabilityRoutes);
 app.use("/api/uploads", uploadRoutes);
 
 app.use((err, req, res, next) => {
