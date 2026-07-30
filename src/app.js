@@ -30,12 +30,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
-  const hasAuthCookie = Boolean(req.cookies?.bettyAuthToken);
-
-  if (!hasAuthCookie) {
-    return res.redirect("/public/pages/login.html");
-  }
-
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 

@@ -424,8 +424,10 @@ form.addEventListener("submit", async (event) => {
   const auth = getAuthState();
 
   if (!auth) {
-    setFeedback("Debes iniciar sesion para reservar.", "error");
-    window.location.href = "/public/pages/login.html";
+    const returnTo = encodeURIComponent(
+      `${window.location.pathname}${window.location.search}`,
+    );
+    window.location.href = `/public/pages/login.html?returnTo=${returnTo}&reason=booking-auth-required`;
     return;
   }
 

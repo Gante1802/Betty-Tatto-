@@ -14,19 +14,42 @@
   </head>
   <body>
     <main class="card">
-      <h1 id="welcome">Hola</h1>
-      <p id="user-role"></p>
-      <p id="user-name"></p>
-      <p>
-        Sesion activa. Desde aqui puedes ir a reservar un flash o tatuaje
-        personalizado.
-      </p>
+      <section class="profile-section">
+        <h2 id="welcome">Hola</h2>
+        <p id="user-role"></p>
+        <p id="user-name"></p>
+      </section>
 
       <div class="actions">
         <a href="/public/pages/booking.html">Reservar cita</a>
         <a href="/public/index.html">Volver al inicio</a>
         <button id="logout-btn" type="button">Cerrar sesion</button>
       </div>
+
+      <section class="status-section">
+        <h1>Estado de tu solicitud</h1>
+        <p id="status-intro" class="status-intro">Cargando tu solicitud...</p>
+
+        <article id="current-booking" class="current-booking hidden">
+          <header class="current-booking-head">
+            <h2 id="booking-title">Solicitud activa</h2>
+            <span id="booking-status" class="status-badge">Pendiente</span>
+          </header>
+          <p id="booking-date"></p>
+          <p id="booking-type"></p>
+          <p id="booking-contact"></p>
+          <p id="booking-admin-comment"></p>
+          <p id="booking-admin-price"></p>
+          <p id="booking-updated-at" class="booking-updated-at"></p>
+        </article>
+
+        <article id="no-booking" class="no-booking hidden">
+          <p>
+            Aun no tienes solicitudes. Crea tu primera reserva y aqui veras su
+            estado.
+          </p>
+        </article>
+      </section>
     </main>
 
     <script src="/public/assets/js/profile.js"></script>

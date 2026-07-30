@@ -26,91 +26,177 @@
           <button id="logout-btn" class="secondary">Cerrar sesion</button>
         </div>
       </header>
-      <section>
-        <h2>Calendario de disponibilidad</h2>
-        <p class="availability-hint">
-          Toca un dia para activarlo o desactivarlo.
-        </p>
-
-        <div class="calendar-shell">
-          <div class="calendar-header">
-            <button id="admin-calendar-prev" class="secondary" type="button">
-              Mes anterior
-            </button>
-            <h3 id="admin-calendar-label" class="calendar-label"></h3>
-            <button id="admin-calendar-next" class="secondary" type="button">
-              Mes siguiente
-            </button>
-          </div>
-
-          <div class="calendar-weekdays">
-            <span>Lun</span>
-            <span>Mar</span>
-            <span>Mie</span>
-            <span>Jue</span>
-            <span>Vie</span>
-            <span>Sab</span>
-            <span>Dom</span>
-          </div>
-
-          <div id="admin-calendar-grid" class="calendar-grid"></div>
-        </div>
-
-        <div id="slot-editor" class="slot-editor hidden">
-          <h3>Horarios para <span id="slot-editor-date"></span></h3>
-          <form id="slot-form" class="slot-form">
-            <label for="slot-time-input">Agregar hora</label>
-            <div class="slot-form-row">
-              <input id="slot-time-input" name="time" type="time" required />
-              <button class="primary" type="submit">Agregar</button>
+      <div class="admin-layout">
+        <aside class="booking-side-panel">
+          <section>
+            <h2>Solicitudes de citas</h2>
+            <p class="availability-hint">
+              Revisa cada solicitud, aceptala o niegala y agrega un comentario
+              para responder (precio opcional).
+            </p>
+            <div class="booking-toolbar">
+              <label for="booking-status-filter">Filtrar por estado</label>
+              <select id="booking-status-filter">
+                <option value="">Todas</option>
+                <option value="pending">Pendientes</option>
+                <option value="approved">Aprobadas</option>
+                <option value="rejected">Rechazadas</option>
+                <option value="contacted">Contactadas</option>
+              </select>
+              <button id="booking-refresh-btn" class="secondary" type="button">
+                Recargar
+              </button>
             </div>
-          </form>
+            <p id="booking-feedback" class="feedback"></p>
+            <div id="booking-list" class="booking-list"></div>
+          </section>
+        </aside>
 
-          <div id="slot-list" class="slot-list"></div>
+        <div class="admin-main-content">
+          <section>
+            <h2>Disponibilidad y horarios</h2>
+            <p class="availability-hint">
+              Marca los dias en los que atenderas. Los horarios base se aplican
+              automaticamente a cada dia habilitado.
+            </p>
+            <div class="availability-steps">
+              <span class="step-chip"
+                >1. Haz click en un dia para activarlo</span
+              >
+              <span class="step-chip"
+                >2. Haz click otra vez para desactivarlo</span
+              >
+              <span class="step-chip">3. Revisa abajo los horarios base</span>
+            </div>
+
+            <div class="calendar-shell">
+              <div class="calendar-header">
+                <button
+                  id="admin-calendar-prev"
+                  class="secondary"
+                  type="button"
+                >
+                  Mes anterior
+                </button>
+                <h3 id="admin-calendar-label" class="calendar-label"></h3>
+                <button
+                  id="admin-calendar-next"
+                  class="secondary"
+                  type="button"
+                >
+                  Mes siguiente
+                </button>
+              </div>
+
+              <div class="calendar-weekdays">
+                <span>Lun</span>
+                <span>Mar</span>
+                <span>Mie</span>
+                <span>Jue</span>
+                <span>Vie</span>
+                <span>Sab</span>
+                <span>Dom</span>
+              </div>
+
+              <div id="admin-calendar-grid" class="calendar-grid"></div>
+
+              <div class="calendar-legend">
+                <span class="legend-item">
+                  <span class="legend-dot available"></span>
+                  Dia disponible
+                </span>
+                <span class="legend-item">
+                  <span class="legend-dot today"></span>
+                  Hoy
+                </span>
+                <span class="legend-item">
+                  <span class="legend-dot disabled"></span>
+                  Dia no disponible
+                </span>
+              </div>
+            </div>
+
+            <div id="slot-editor" class="slot-editor hidden">
+              <h3>Horarios para <span id="slot-editor-date"></span></h3>
+              <p id="slot-summary" class="slot-summary"></p>
+              <form id="slot-form" class="slot-form">
+                <label for="slot-time-input">Agregar hora</label>
+                <div class="slot-form-row">
+                  <input
+                    id="slot-time-input"
+                    name="time"
+                    type="time"
+                    required
+                  />
+                  <button class="primary" type="submit">Agregar</button>
+                </div>
+              </form>
+
+              <div class="slot-editor-actions">
+                <button id="slot-reset-btn" class="secondary" type="button">
+                  Restaurar horarios base
+                </button>
+                <button id="slot-disable-date-btn" class="danger" type="button">
+                  Desactivar este dia
+                </button>
+              </div>
+
+              <div id="slot-list" class="slot-list"></div>
+            </div>
+          </section>
+          <section>
+            <h2 id="form-title">Crear nuevo flash</h2>
+            <form id="flash-form" class="form-grid">
+              <div>
+                <label for="title">Titulo</label>
+                <input id="title" name="title" type="text" required />
+              </div>
+
+              <div>
+                <label for="price">Precio</label>
+                <input id="price" name="price" type="text" required />
+              </div>
+
+              <div class="full">
+                <label for="image">URL de imagen</label>
+                <input id="image" name="image" type="text" required />
+              </div>
+
+              <div class="full">
+                <label for="description">Descripcion</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  required
+                ></textarea>
+              </div>
+
+              <div>
+                <button id="submit-btn" class="primary" type="submit">
+                  Guardar flash
+                </button>
+              </div>
+
+              <div>
+                <button
+                  id="cancel-edit-btn"
+                  class="secondary"
+                  type="button"
+                  hidden
+                >
+                  Cancelar edicion
+                </button>
+              </div>
+            </form>
+
+            <p id="feedback" class="feedback"></p>
+          </section>
+          <section>
+            <h2>Catalogo actual</h2>
+            <div id="flash-list" class="flash-list"></div>
+          </section>
         </div>
-      </section>
-      <section>
-        <h2 id="form-title">Crear nuevo flash</h2>
-        <form id="flash-form" class="form-grid">
-          <div>
-            <label for="title">Titulo</label>
-            <input id="title" name="title" type="text" required />
-          </div>
-
-          <div>
-            <label for="price">Precio</label>
-            <input id="price" name="price" type="text" required />
-          </div>
-
-          <div class="full">
-            <label for="image">URL de imagen</label>
-            <input id="image" name="image" type="text" required />
-          </div>
-
-          <div class="full">
-            <label for="description">Descripcion</label>
-            <textarea id="description" name="description" required></textarea>
-          </div>
-
-          <div>
-            <button id="submit-btn" class="primary" type="submit">
-              Guardar flash
-            </button>
-          </div>
-
-          <div>
-            <button id="cancel-edit-btn" class="secondary" type="button" hidden>
-              Cancelar edicion
-            </button>
-          </div>
-        </form>
-
-        <p id="feedback" class="feedback"></p>
-      </section>
-      <section>
-        <h2>Catalogo actual</h2>
-        <div id="flash-list" class="flash-list"></div>
-      </section>
+      </div>
     </main>
 
     <script src="/public/assets/js/admin.js"></script>

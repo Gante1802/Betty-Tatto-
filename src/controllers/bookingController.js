@@ -3,6 +3,9 @@ const {
   bookingsCollection,
   availableDatesCollection,
 } = require("../database/collections");
+const {
+  notifyBookingStatusUpdate,
+} = require("../emails/bookingStatusNotifier");
 
 const ALLOWED_BOOKING_TYPES = new Set(["flash", "custom"]);
 const ALLOWED_CONTACT_METHODS = new Set(["email", "whatsapp"]);
@@ -104,6 +107,10 @@ function mapBooking(doc) {
     color: doc.color || null,
     style: doc.style || null,
     referenceImageUrl: doc.referenceImageUrl || null,
+    adminComment: doc.adminComment || null,
+    adminQuotedPrice: doc.adminQuotedPrice || null,
+    adminRespondedBy: doc.adminRespondedBy || null,
+    adminRespondedAt: doc.adminRespondedAt || null,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   };
@@ -237,6 +244,8 @@ async function listBookings(req, res, next) {
 async function updateBookingStatus(req, res, next) {
   try {
     const status = normalizeText(req.body.status);
+    const adminComment = normalizeText(req.body.adminComment);
+    const adminQuotedPrice = normalizeText(req.body.adminQuotedPrice);
 
     if (!ALLOWED_STATUSES.has(status)) {
       return res.status(400).json({ error: "Estado de cita invalido." });
@@ -248,13 +257,19 @@ async function updateBookingStatus(req, res, next) {
 
     const bookingId = new ObjectId(req.params.id);
 
+    const updateSet = {
+      status,
+      adminComment: adminComment || null,
+      adminQuotedPrice: adminQuotedPrice || null,
+      adminRespondedBy: req.user?.username || null,
+      adminRespondedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
     const updateResult = await bookingsCollection().updateOne(
       { _id: bookingId },
       {
-        $set: {
-          status,
-          updatedAt: new Date().toISOString(),
-        },
+        $set: updateSet,
       },
     );
 
@@ -266,9 +281,12 @@ async function updateBookingStatus(req, res, next) {
       _id: bookingId,
     });
 
+    const notification = await notifyBookingStatusUpdate(updatedBooking);
+
     return res.status(200).json({
       message: "Estado de solicitud actualizado.",
       data: mapBooking(updatedBooking),
+      notification,
     });
   } catch (error) {
     return next(error);

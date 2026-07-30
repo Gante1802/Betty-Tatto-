@@ -16,6 +16,10 @@ if (!auth || !auth.token || !auth.user || auth.user.role !== "admin") {
 const flashForm = document.getElementById("flash-form");
 const feedback = document.getElementById("feedback");
 const flashList = document.getElementById("flash-list");
+const bookingList = document.getElementById("booking-list");
+const bookingFeedback = document.getElementById("booking-feedback");
+const bookingStatusFilter = document.getElementById("booking-status-filter");
+const bookingRefreshButton = document.getElementById("booking-refresh-btn");
 const logoutButton = document.getElementById("logout-btn");
 const cancelEditButton = document.getElementById("cancel-edit-btn");
 const formTitle = document.getElementById("form-title");
@@ -27,12 +31,16 @@ const adminCalendarNext = document.getElementById("admin-calendar-next");
 
 const slotEditor = document.getElementById("slot-editor");
 const slotEditorDate = document.getElementById("slot-editor-date");
+const slotSummary = document.getElementById("slot-summary");
 const slotForm = document.getElementById("slot-form");
 const slotList = document.getElementById("slot-list");
+const slotResetButton = document.getElementById("slot-reset-btn");
+const slotDisableDateButton = document.getElementById("slot-disable-date-btn");
 
 let editingFlashId = null;
 let availabilityMap = new Map();
 let calendarMonthDate = new Date();
+let selectedAvailabilityDate = null;
 calendarMonthDate.setDate(1);
 
 // Horarios por defecto para cada dia disponible.
@@ -53,6 +61,11 @@ const DEFAULT_DAILY_SLOTS = [
 function setFeedback(message, type) {
   feedback.textContent = message;
   feedback.className = `feedback ${type}`;
+}
+
+function setBookingFeedback(message, type) {
+  bookingFeedback.textContent = message;
+  bookingFeedback.className = `feedback ${type}`;
 }
 
 function authHeaders() {
@@ -102,22 +115,89 @@ function slotsForDisplay(slots) {
   return normalized.length ? normalized : [...DEFAULT_DAILY_SLOTS];
 }
 
-function renderHoursInfo() {
-  if (slotForm) {
-    slotForm.classList.add("hidden");
+function isValidTime(value) {
+  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(String(value || "").trim());
+}
+
+function getSlotsForDate(date) {
+  if (!date || !availabilityMap.has(date)) {
+    return [];
   }
+
+  return slotsForDisplay(availabilityMap.get(date).slots);
+}
+
+function renderHoursInfo() {
+  const baseSlots = slotsForDisplay([]);
 
   if (slotEditor) {
     slotEditor.classList.remove("hidden");
   }
 
   if (slotEditorDate) {
-    slotEditorDate.textContent = "cada dia disponible";
+    slotEditorDate.textContent = selectedAvailabilityDate
+      ? formatDateLabel(selectedAvailabilityDate)
+      : "cada dia disponible";
   }
 
-  slotList.innerHTML = slotsForDisplay([])
-    .map((slot) => `<article class="slot-item"><span>${slot}</span></article>`)
+  if (slotSummary) {
+    if (selectedAvailabilityDate) {
+      const daySlots = getSlotsForDate(selectedAvailabilityDate);
+      slotSummary.textContent = `Gestionando ${daySlots.length} horarios para ${formatDateLabel(selectedAvailabilityDate)}.`;
+    } else {
+      slotSummary.textContent = `Horario base activo (${baseSlots.length} turnos): estos horarios se usan en todos los dias habilitados.`;
+    }
+  }
+
+  if (slotForm) {
+    slotForm.classList.toggle("hidden", !selectedAvailabilityDate);
+  }
+
+  if (slotResetButton) {
+    slotResetButton.disabled = !selectedAvailabilityDate;
+  }
+
+  if (slotDisableDateButton) {
+    slotDisableDateButton.disabled = !selectedAvailabilityDate;
+  }
+
+  const slotsToRender = selectedAvailabilityDate
+    ? getSlotsForDate(selectedAvailabilityDate)
+    : baseSlots;
+
+  slotList.innerHTML = slotsToRender
+    .map((slot) => {
+      const removeButton = selectedAvailabilityDate
+        ? `<button class="slot-remove-btn" type="button" data-slot="${slot}">Quitar</button>`
+        : "";
+
+      return `<article class="slot-item"><span>${slot}</span>${removeButton}</article>`;
+    })
     .join("");
+}
+
+async function persistSlotsForDate(date, slots) {
+  const response = await fetch(`/api/availability/${date}/slots`, {
+    method: "PATCH",
+    headers: authHeaders(),
+    body: JSON.stringify({ slots }),
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload.error || "No se pudieron guardar los horarios.");
+  }
+}
+
+function selectAvailabilityDate(date) {
+  if (!availabilityMap.has(date)) {
+    selectedAvailabilityDate = null;
+    renderHoursInfo();
+    return;
+  }
+
+  selectedAvailabilityDate = date;
+  renderHoursInfo();
 }
 
 function resetFormState() {
@@ -148,6 +228,162 @@ async function fetchFlashes() {
   }
 
   return payload.data || [];
+}
+
+function formatDateTime(value) {
+  if (!value) {
+    return "-";
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return parsed.toLocaleString("es-ES", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
+function formatOptional(value) {
+  const normalized = String(value || "").trim();
+  return normalized || "-";
+}
+
+function formatBookingType(value) {
+  if (value === "flash") {
+    return "Flash";
+  }
+
+  if (value === "custom") {
+    return "Personalizado";
+  }
+
+  return formatOptional(value);
+}
+
+function formatBookingStatus(value) {
+  const status = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (status === "pending") {
+    return "Pendiente";
+  }
+
+  if (status === "approved") {
+    return "Aprobada";
+  }
+
+  if (status === "rejected") {
+    return "Rechazada";
+  }
+
+  if (status === "contacted") {
+    return "Contactada";
+  }
+
+  return formatOptional(value);
+}
+
+function getSelectedBookingStatusFilter() {
+  return String(bookingStatusFilter?.value || "").trim();
+}
+
+async function fetchBookings() {
+  const statusFilter = getSelectedBookingStatusFilter();
+  const query = statusFilter
+    ? `?status=${encodeURIComponent(statusFilter)}`
+    : "";
+
+  const response = await fetch(`/api/bookings${query}`, {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload.error || "No se pudieron cargar las solicitudes.");
+  }
+
+  return Array.isArray(payload.data) ? payload.data : [];
+}
+
+function renderBookings(bookings) {
+  if (!bookings.length) {
+    bookingList.innerHTML =
+      '<p class="booking-empty">No hay solicitudes registradas por ahora.</p>';
+    return;
+  }
+
+  bookingList.innerHTML = bookings
+    .map((booking) => {
+      const statusClass = String(booking.status || "")
+        .trim()
+        .toLowerCase();
+      const referenceLink = booking.referenceImageUrl
+        ? `<a href="${booking.referenceImageUrl}" target="_blank" rel="noopener">Ver referencia</a>`
+        : "-";
+
+      return `
+        <article class="booking-item">
+          <header>
+            <h3>${booking.name}</h3>
+            <span class="booking-status ${statusClass}">${formatBookingStatus(booking.status)}</span>
+          </header>
+          <p class="booking-meta">Creada: ${formatDateTime(booking.createdAt)}</p>
+          <div class="booking-grid">
+            <p><strong>Tipo:</strong> ${formatBookingType(booking.type)}</p>
+            <p><strong>Fecha:</strong> ${formatOptional(booking.appointmentDate)} ${formatOptional(booking.appointmentTime)}</p>
+            <p><strong>Cliente:</strong> ${formatOptional(booking.userDisplayName)} (${formatOptional(booking.username)})</p>
+            <p><strong>Contacto:</strong> ${formatOptional(booking.contactMethod)}</p>
+            <p><strong>Email:</strong> ${formatOptional(booking.email)}</p>
+            <p><strong>WhatsApp:</strong> ${formatOptional(booking.whatsapp)}</p>
+            <p><strong>Flash:</strong> ${formatOptional(booking.flashDesign)}</p>
+            <p><strong>Zona:</strong> ${formatOptional(booking.placement)}</p>
+            <p><strong>Tamano:</strong> ${formatOptional(booking.size)}</p>
+            <p><strong>Color:</strong> ${formatOptional(booking.color)}</p>
+            <p><strong>Estilo:</strong> ${formatOptional(booking.style)}</p>
+            <p><strong>Referencia:</strong> ${referenceLink}</p>
+          </div>
+          <p><strong>Idea:</strong> ${formatOptional(booking.idea)}</p>
+          <p><strong>Respuesta admin:</strong> ${formatOptional(booking.adminComment)}</p>
+          <p><strong>Precio sugerido:</strong> ${formatOptional(booking.adminQuotedPrice)}</p>
+          <p><strong>Respondido:</strong> ${formatDateTime(booking.adminRespondedAt)}</p>
+
+          <form class="booking-response-form" data-booking-id="${booking.id}">
+            <label>
+              Comentario para cliente
+              <textarea name="adminComment" placeholder="Ej: Te propongo este diseno por ..."></textarea>
+            </label>
+            <div class="booking-response-grid">
+              <label>
+                Precio (opcional)
+                <input name="adminQuotedPrice" type="text" placeholder="Ej: 120 USD" />
+              </label>
+            </div>
+            <div class="booking-actions">
+              <button class="primary" type="submit" data-next-status="approved">Aceptar</button>
+              <button class="danger" type="submit" data-next-status="rejected">Negar</button>
+            </div>
+          </form>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function refreshBookings() {
+  try {
+    const bookings = await fetchBookings();
+    renderBookings(bookings);
+  } catch (error) {
+    setBookingFeedback(error.message, "error");
+  }
 }
 
 function renderFlashes(flashes) {
@@ -226,7 +462,16 @@ function renderAvailability(dates) {
   availabilityMap = new Map(
     dates.map((item) => [item.date, { slots: slotsForDisplay(item.slots) }]),
   );
+
+  if (
+    selectedAvailabilityDate &&
+    !availabilityMap.has(selectedAvailabilityDate)
+  ) {
+    selectedAvailabilityDate = null;
+  }
+
   renderAvailabilityCalendar();
+  renderHoursInfo();
 }
 
 async function refreshAvailability() {
@@ -352,6 +597,66 @@ flashList.addEventListener("click", async (event) => {
   }
 });
 
+bookingList.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const submitter = event.submitter;
+  const status = submitter?.dataset?.nextStatus;
+  const formElement = event.target;
+  const bookingId = formElement?.dataset?.bookingId;
+
+  if (!bookingId || !status) {
+    return;
+  }
+
+  const formData = new FormData(formElement);
+  const body = {
+    status,
+    adminComment: String(formData.get("adminComment") || "").trim(),
+    adminQuotedPrice: String(formData.get("adminQuotedPrice") || "").trim(),
+  };
+
+  try {
+    const response = await fetch(`/api/bookings/${bookingId}/status`, {
+      method: "PATCH",
+      headers: authHeaders(),
+      body: JSON.stringify(body),
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        payload.error || "No se pudo actualizar el estado de la solicitud.",
+      );
+    }
+
+    const notificationSummary = payload?.notification?.sent
+      ? " Notificacion enviada al cliente."
+      : " Estado actualizado sin notificacion automatica.";
+
+    setBookingFeedback(
+      `Solicitud actualizada correctamente.${notificationSummary}`,
+      "success",
+    );
+    await refreshBookings();
+  } catch (error) {
+    setBookingFeedback(error.message, "error");
+  }
+});
+
+if (bookingStatusFilter) {
+  bookingStatusFilter.addEventListener("change", () => {
+    refreshBookings();
+  });
+}
+
+if (bookingRefreshButton) {
+  bookingRefreshButton.addEventListener("click", () => {
+    refreshBookings();
+  });
+}
+
 adminCalendarPrev.addEventListener("click", () => {
   calendarMonthDate = new Date(
     calendarMonthDate.getFullYear(),
@@ -394,28 +699,135 @@ adminCalendarGrid.addEventListener("click", async (event) => {
 
       setFeedback(`Fecha ${formatDateLabel(date)} activada.`, "success");
       await refreshAvailability();
+      selectAvailabilityDate(date);
       return;
     }
 
-    const confirmed = window.confirm(
-      `Quieres desactivar ${formatDateLabel(date)}?`,
+    selectAvailabilityDate(date);
+    setFeedback(`Editando horarios de ${formatDateLabel(date)}.`, "success");
+  } catch (error) {
+    setFeedback(error.message, "error");
+  }
+});
+
+slotForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!selectedAvailabilityDate) {
+    setFeedback("Primero selecciona un dia disponible.", "error");
+    return;
+  }
+
+  const timeValue = String(slotForm.elements.time.value || "").trim();
+
+  if (!isValidTime(timeValue)) {
+    setFeedback("Usa una hora valida en formato HH:mm.", "error");
+    return;
+  }
+
+  const currentSlots = getSlotsForDate(selectedAvailabilityDate);
+
+  if (currentSlots.includes(timeValue)) {
+    setFeedback("Esa hora ya existe en el dia seleccionado.", "error");
+    return;
+  }
+
+  const nextSlots = [...currentSlots, timeValue].sort();
+
+  try {
+    await persistSlotsForDate(selectedAvailabilityDate, nextSlots);
+    setFeedback("Horario agregado correctamente.", "success");
+    slotForm.reset();
+    await refreshAvailability();
+    selectAvailabilityDate(selectedAvailabilityDate);
+  } catch (error) {
+    setFeedback(error.message, "error");
+  }
+});
+
+slotList.addEventListener("click", async (event) => {
+  const slotToRemove = event.target.dataset.slot;
+
+  if (!selectedAvailabilityDate || !slotToRemove) {
+    return;
+  }
+
+  const currentSlots = getSlotsForDate(selectedAvailabilityDate);
+
+  if (currentSlots.length <= 1) {
+    setFeedback(
+      "Debe quedar al menos 1 horario. Puedes desactivar el dia si no atenderas.",
+      "error",
     );
+    return;
+  }
 
-    if (!confirmed) {
-      return;
-    }
+  const nextSlots = currentSlots.filter((slot) => slot !== slotToRemove);
 
-    const response = await fetch(`/api/availability/${date}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
+  try {
+    await persistSlotsForDate(selectedAvailabilityDate, nextSlots);
+    setFeedback("Horario eliminado correctamente.", "success");
+    await refreshAvailability();
+    selectAvailabilityDate(selectedAvailabilityDate);
+  } catch (error) {
+    setFeedback(error.message, "error");
+  }
+});
+
+slotResetButton.addEventListener("click", async () => {
+  if (!selectedAvailabilityDate) {
+    setFeedback("Primero selecciona un dia disponible.", "error");
+    return;
+  }
+
+  try {
+    await persistSlotsForDate(selectedAvailabilityDate, [
+      ...DEFAULT_DAILY_SLOTS,
+    ]);
+    setFeedback(
+      "Horarios base restaurados para el dia seleccionado.",
+      "success",
+    );
+    await refreshAvailability();
+    selectAvailabilityDate(selectedAvailabilityDate);
+  } catch (error) {
+    setFeedback(error.message, "error");
+  }
+});
+
+slotDisableDateButton.addEventListener("click", async () => {
+  if (!selectedAvailabilityDate) {
+    setFeedback("Primero selecciona un dia disponible.", "error");
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `Quieres desactivar ${formatDateLabel(selectedAvailabilityDate)}?`,
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `/api/availability/${selectedAvailabilityDate}`,
+      {
+        method: "DELETE",
+        headers: authHeaders(),
+      },
+    );
     const payload = await response.json();
 
     if (!response.ok) {
       throw new Error(payload.error || "No se pudo desactivar la fecha.");
     }
 
-    setFeedback(`Fecha ${formatDateLabel(date)} desactivada.`, "success");
+    setFeedback(
+      `Fecha ${formatDateLabel(selectedAvailabilityDate)} desactivada.`,
+      "success",
+    );
+    selectedAvailabilityDate = null;
     await refreshAvailability();
   } catch (error) {
     setFeedback(error.message, "error");
@@ -442,3 +854,4 @@ resetFormState();
 renderHoursInfo();
 refreshFlashes();
 refreshAvailability();
+refreshBookings();

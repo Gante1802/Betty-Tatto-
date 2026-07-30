@@ -5,6 +5,41 @@ const tabLogin = document.getElementById("tab-login");
 const tabRegister = document.getElementById("tab-register");
 const FALLBACK_API_ORIGIN = "http://localhost:9000";
 
+function sanitizeReturnTo(value) {
+  const path = String(value || "").trim();
+
+  if (!path || !path.startsWith("/")) {
+    return null;
+  }
+
+  if (path.startsWith("//")) {
+    return null;
+  }
+
+  if (/^\/public\/pages\/login\.html(?:$|[?#])/i.test(path)) {
+    return null;
+  }
+
+  return path;
+}
+
+function getRequestedReturnTo() {
+  const searchParams = new URLSearchParams(window.location.search);
+  return sanitizeReturnTo(searchParams.get("returnTo"));
+}
+
+function getDefaultRedirectForUser(user) {
+  if (user?.role === "admin") {
+    return "/public/pages/admin.html";
+  }
+
+  return "/public/pages/profile.html";
+}
+
+function getPostAuthRedirect(user) {
+  return getRequestedReturnTo() || getDefaultRedirectForUser(user);
+}
+
 const existingAuthRaw = localStorage.getItem("bettyAuth");
 let existingAuth = null;
 
@@ -17,11 +52,7 @@ if (existingAuthRaw) {
 }
 
 if (existingAuth && existingAuth.token && existingAuth.user) {
-  if (existingAuth.user.role === "admin") {
-    window.location.href = "/public/pages/admin.html";
-  } else {
-    window.location.href = "/public/pages/profile.html";
-  }
+  window.location.href = getPostAuthRedirect(existingAuth.user);
 }
 
 function setFeedback(message, type) {
@@ -136,12 +167,7 @@ loginForm.addEventListener("submit", async (event) => {
 
     setFeedback("Sesion iniciada. Redirigiendo...", "success");
 
-    if (payload.user.role === "admin") {
-      window.location.href = "/public/pages/admin.html";
-      return;
-    }
-
-    window.location.href = "/public/pages/profile.html";
+    window.location.href = getPostAuthRedirect(payload.user);
   } catch (error) {
     if (error instanceof TypeError) {
       setFeedback(
@@ -192,7 +218,7 @@ registerForm.addEventListener("submit", async (event) => {
     );
 
     setFeedback("Cuenta creada. Redirigiendo...", "success");
-    window.location.href = "/public/pages/profile.html";
+    window.location.href = getPostAuthRedirect(payload.user);
   } catch (error) {
     if (error instanceof TypeError) {
       setFeedback(
