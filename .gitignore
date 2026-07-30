@@ -3,3 +3,8 @@ cositas.txt/
 package-lock.json
 node_modules/
 databaseprompt.txt/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
